@@ -58,6 +58,6 @@ describe('GLB round-trip', () => {
     expect(g.morphAttributes?.position?.length || 0).toBe(asset.geometry.morphAttributes.position!.length)
     const inMorph = asset.geometry.morphAttributes.position![0] as THREE.BufferAttribute
     const outMorph = g.morphAttributes.position![0]
-    expect(Array.from(outMorph.array)).toEqual(Array.from(inMorph.array))
+    expect(outMorph.array).toEqual(inMorph.array)
   })
 })
