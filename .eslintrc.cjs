@@ -19,11 +19,15 @@ module.exports = {
   parserOptions: {
     ecmaVersion: "latest",
     sourceType: "module",
-    ecmaFeatures: { jsx: true }
+    ecmaFeatures: { jsx: true },
+    project: './tsconfig.json'
   },
   rules: {
     "react-refresh/only-export-components": "off",
     "react/prop-types": "off",
+    // Disabled because it produces false positives for props on @react-three/fiber components.
+    // Attempts to fix this with TypeScript augmentation were unsuccessful due to toolchain issues.
+    "react/no-unknown-property": "off",
     "simple-import-sort/imports": "warn",
     "simple-import-sort/exports": "warn",
     "import/order": "off",

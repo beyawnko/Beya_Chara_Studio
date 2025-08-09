@@ -1,7 +1,8 @@
 import React, { useMemo, useState } from 'react'
-import { useCharacterStore } from '../state/useCharacterStore'
-import { suggestBoneMap, alignHeadToBodyNeck, rebindHeadToBody } from '../lib/retarget'
 import * as THREE from 'three'
+
+import { alignHeadToBodyNeck, rebindHeadToBody,suggestBoneMap } from '../lib/retarget'
+import { useCharacterStore } from '../state/useCharacterStore'
 
 export function RetargetPanel() {
   const head = useCharacterStore(s => s.head)
@@ -53,10 +54,14 @@ export function RetargetPanel() {
             const pos = new THREE.Vector3(offset.position.x, offset.position.y, offset.position.z)
             const eul = new THREE.Euler(offset.rotation.x, offset.rotation.y, offset.rotation.z)
             alignHeadToBodyNeck(head, body, scale, pos, eul)
-            await rebindHeadToBody(head, body, finalMap as any)
+            await rebindHeadToBody(head, body, finalMap)
             setStatus('Head aligned and rebound to body skeleton.')
-          } catch (e:any) {
-            setStatus('Error: ' + (e.message ?? String(e)))
+          } catch (e: unknown) {
+            if (e instanceof Error) {
+              setStatus('Error: ' + e.message)
+            } else {
+              setStatus('Error: ' + String(e))
+            }
           }
         }}>Apply to Head (align + rebind)</button>
       </div>

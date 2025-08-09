@@ -1,4 +1,5 @@
 import React from 'react'
+
 import { useCharacterStore } from '../state/useCharacterStore'
 
 export function ConflictPanel() {

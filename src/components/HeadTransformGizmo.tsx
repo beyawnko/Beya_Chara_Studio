@@ -1,15 +1,15 @@
-import React, { useEffect, useRef } from 'react'
 import { TransformControls } from '@react-three/drei'
 import { useThree } from '@react-three/fiber'
+import React, { useEffect, useRef } from 'react'
+
 import { useCharacterStore } from '../state/useCharacterStore'
 
 export function HeadTransformGizmo() {
   const head = useCharacterStore(s => s.head)
   const active = useCharacterStore(s => s.activePart)
-  const setHeadOffset = useCharacterStore(s => s.setHeadOffset)
   const offset = useCharacterStore(s => s.headOffset)
-  const ref = useRef<any>(null)
-  const { camera, gl } = useThree()
+  const ref = useRef<React.ElementRef<typeof TransformControls>>(null)
+  useThree()
 
   useEffect(() => {
     if (!head?.mesh || active!=='head') return

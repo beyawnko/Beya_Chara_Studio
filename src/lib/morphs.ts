@@ -1,7 +1,8 @@
 import * as THREE from 'three'
+
 import type { LoadedFBX } from '../types'
-import { createPool } from './pool'
 import { categorizeMorph } from './categorize'
+import { createPool } from './pool'
 
 let pool: ReturnType<typeof createPool> | null = null
 function ensurePool() {
@@ -36,7 +37,7 @@ export async function addVariantAsMorph(base: LoadedFBX, variant: LoadedFBX): Pr
     const sim = await ensurePool().run('cosineSim', { a: existing[i].array as Float32Array, b: dPos })
     if (sim >= 0.98) {
       // get morph name by reverse lookup
-      const dict = (a as any).morphTargetsDictionary || {}
+      const dict = a.morphTargetsDictionary || {}
       const nameAtI = Object.keys(dict).find(k => dict[k] === i) || `Morph${i}`
       duplicateOf = nameAtI
       break
@@ -51,27 +52,27 @@ export async function addVariantAsMorph(base: LoadedFBX, variant: LoadedFBX): Pr
 
   // bind to base mesh
   const idx = (a.morphAttributes.position?.length ?? 1) - 1
-  ;(base.mesh as any).morphTargetInfluences ??= []
-  ;(base.mesh as any).morphTargetDictionary ??= {}
-  ;(base.mesh as any).morphTargetDictionary[name] = idx
+  base.mesh.morphTargetInfluences ??= []
+  base.mesh.morphTargetDictionary ??= {}
+  base.mesh.morphTargetDictionary[name] = idx
 
   // stash metadata on geometry for UI (not serialized)
-  const meta = (a as any).__morphMeta ?? ((a as any).__morphMeta = {})
+  const meta = a.__morphMeta ?? (a.__morphMeta = {})
   meta[name] = { category, duplicateOf }
 
   return name
 }
 
 export function getMorphMeta(geo: THREE.BufferGeometry): Record<string, {category:string, duplicateOf:string|null}> {
-  return (geo as any).__morphMeta ?? {}
+  return geo.__morphMeta ?? {}
 }
 
 export function attachMorph(geo: THREE.BufferGeometry, name: string, dPos: Float32Array, dN?: Float32Array) {
   (geo.morphAttributes.position ??= []).push(new THREE.BufferAttribute(dPos, 3))
   if (dN) (geo.morphAttributes.normal ??= []).push(new THREE.BufferAttribute(dN, 3))
   geo.morphTargetsRelative = true
-  ;(geo as any).morphTargetsDictionary ??= {}
-  ;(geo as any).morphTargetsDictionary[name] = (geo.morphAttributes.position!.length - 1)
+  geo.morphTargetsDictionary ??= {}
+  geo.morphTargetsDictionary[name] = (geo.morphAttributes.position!.length - 1)
 }
 
 function sanitizeMorphName(s: string) {

@@ -1,14 +1,15 @@
 import React from 'react'
-import { Viewport } from './components/Viewport'
-import { FileDrop } from './components/FileDrop'
-import { ExportPanel } from './components/ExportPanel'
-import { ConflictPanel } from './components/ConflictPanel'
-import { PartTabs } from './components/PartTabs'
+
 import { ARKitPanel } from './components/ARKitPanel'
-import { MaterialSplitPanel } from './components/MaterialSplitPanel'
-import { SkeletonBadge } from './components/SkeletonBadge'
-import { RetargetPanel } from './components/RetargetPanel'
 import { BoneMapEditor } from './components/BoneMapEditor'
+import { ConflictPanel } from './components/ConflictPanel'
+import { ExportPanel } from './components/ExportPanel'
+import { FileDrop } from './components/FileDrop'
+import { MaterialSplitPanel } from './components/MaterialSplitPanel'
+import { PartTabs } from './components/PartTabs'
+import { RetargetPanel } from './components/RetargetPanel'
+import { SkeletonBadge } from './components/SkeletonBadge'
+import { Viewport } from './components/Viewport'
 import { useCharacterStore } from './state/useCharacterStore'
 
 export default function App() {

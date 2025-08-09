@@ -1,7 +1,8 @@
 import * as THREE from 'three'
+
 import type { LoadedFBX } from '../types'
-import { PROFILES, detectProfile } from './skeleton'
 import { createPool } from './pool'
+import { detectProfile,PROFILES } from './skeleton'
 
 export type BoneMap = Record<string, string>
 
@@ -29,7 +30,7 @@ export function suggestBoneMap(src: THREE.Skeleton, dst: THREE.Skeleton): BoneMa
     if (srcProfile) {
       for (const [canon, al] of Object.entries(srcProfile.canonical)) {
         if ((al as string[]).map(x=>x.toLowerCase()).includes(nlow)) {
-          const dstAliases = (dstProfile?.canonical as any)?.[canon]
+          const dstAliases = dstProfile?.canonical[canon]
           if (dstAliases) aliases = dstAliases as string[]
           break
         }
@@ -77,7 +78,11 @@ export function alignHeadToBodyNeck(head: LoadedFBX, body: LoadedFBX, scale=1, o
   head.mesh.quaternion.copy(quat)
   head.mesh.scale.setScalar(scale)
   if (offsetPos) head.mesh.position.add(offsetPos)
-  if (offsetEuler) head.mesh.rotation.x += offsetEuler.x, head.mesh.rotation.y += offsetEuler.y, head.mesh.rotation.z += offsetEuler.z
+  if (offsetEuler) {
+    head.mesh.rotation.x += offsetEuler.x
+    head.mesh.rotation.y += offsetEuler.y
+    head.mesh.rotation.z += offsetEuler.z
+  }
   head.mesh.updateMatrixWorld(true)
 }
 
@@ -102,14 +107,12 @@ export async function rebindHeadToBody(head: LoadedFBX, body: LoadedFBX, map: Bo
     if (si != null && ti != null) remap[si] = ti
   }
 
+  const skinSrc = skinIndex.array as Uint16Array | Uint32Array
   const out = await ensurePool().run('remapSkinIndex', {
-    src: skinIndex.array,
+    src: skinSrc,
     remap,
     fallback: neckIdx
   })
-
-  const ctor = (skinIndex.array as any).constructor as any
-  const buff = new ctor(out as any)
-  geo.setAttribute('skinIndex', new THREE.BufferAttribute(buff, 4))
+  geo.setAttribute('skinIndex', new THREE.BufferAttribute(out, 4))
   head.mesh.bind(body.skeleton)
 }

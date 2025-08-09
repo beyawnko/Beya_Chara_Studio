@@ -1,4 +1,5 @@
 import * as THREE from 'three'
+
 import type { LoadedFBX } from '../types'
 import { attachMorph } from './morphs'
 
