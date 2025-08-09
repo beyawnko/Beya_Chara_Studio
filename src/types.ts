@@ -9,12 +9,3 @@ export type LoadedFBX = {
   head?: THREE.SkinnedMesh | null
   body?: THREE.SkinnedMesh | null
 }
-
-export type CharacterAsset = THREE.Group & {
-  vrmPresets?: string[]
-}
-
-export type ARKitFromVRMReport = {
-  name: string
-  vrm: string
-}
