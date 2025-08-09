@@ -34,10 +34,10 @@ function buildAsset(): LoadedFBX {
 }
 
 describe('GLB round-trip', () => {
-  // TODO: This test is failing due to an issue with the GLTFExporter and skinned meshes.
-  // The exported GLB has an invalid skeleton structure that the GLTFLoader cannot parse.
-  // Disabling for now to unblock CI.
-  it.skip('exports skin + morphs and re-imports with them intact', async () => {
+  // Previously failed due to GLTFExporter cloning the skeleton incorrectly.
+  // Using SkeletonUtils.clone ensures the bones are included so the loader can
+  // restore the skin and morph targets.
+  it('exports skin + morphs and re-imports with them intact', async () => {
     const asset = buildAsset()
     const ab = await exportGLBBuffer(asset)
     const gltf = await new Promise<GLTF>((res, rej) => {
@@ -48,6 +48,16 @@ describe('GLB round-trip', () => {
     gltf.scene.traverse((o: THREE.Object3D)=>{ if (o instanceof THREE.SkinnedMesh) skinned = o })
     expect(skinned).toBeTruthy()
     const g = skinned!.geometry as THREE.BufferGeometry
-    expect(g.morphAttributes?.position?.length || 0).toBeGreaterThan(0)
+
+    // geometry is preserved
+    const inPos = asset.geometry.getAttribute('position') as THREE.BufferAttribute
+    const outPos = g.getAttribute('position') as THREE.BufferAttribute
+    expect(outPos.count).toBe(inPos.count)
+
+    // morph target round-trips
+    expect(g.morphAttributes?.position?.length || 0).toBe(1)
+    const inMorph = asset.geometry.morphAttributes.position![0] as THREE.BufferAttribute
+    const outMorph = g.morphAttributes.position![0]
+    expect(Array.from(outMorph.array)).toEqual(Array.from(inMorph.array))
   })
 })
