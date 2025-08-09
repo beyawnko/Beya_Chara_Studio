@@ -1,6 +1,7 @@
-import React, { useMemo } from 'react'
-import { useCharacterStore } from '../state/useCharacterStore'
+import React from 'react'
+
 import { getPresetMap, PRESET_MAPS } from '../lib/retargetPresets'
+import { useCharacterStore } from '../state/useCharacterStore'
 
 export function BoneMapEditor() {
   const head = useCharacterStore(s => s.head)
@@ -15,7 +16,7 @@ export function BoneMapEditor() {
   const dst = body.skeleton.bones.map(b=>b.name)
 
   function applyPreset(key: keyof typeof PRESET_MAPS) {
-    const preset = getPresetMap(key as any)
+    const preset = getPresetMap(key)
     for (const [s, d] of Object.entries(preset)) {
       setMap(s, d)
     }

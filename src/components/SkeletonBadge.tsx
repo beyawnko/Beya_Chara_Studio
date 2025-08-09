@@ -1,6 +1,9 @@
 import React, { useMemo } from 'react'
-import { useCharacterStore } from '../state/useCharacterStore'
+import * as THREE from 'three'
+
 import { detectProfile } from '../lib/skeleton'
+import { useCharacterStore } from '../state/useCharacterStore'
+import { AnyAsset } from '../types'
 
 export function SkeletonBadge() {
   const base = useCharacterStore(s => s.base)
@@ -26,8 +29,8 @@ export function SkeletonBadge() {
   )
 }
 
-function profileOf(asset:any): string | undefined {
+function profileOf(asset: AnyAsset | null): string | undefined {
   if (!asset?.skeleton) return undefined
-  const names = asset.skeleton.bones.map((b:any)=> b.name)
+  const names = asset.skeleton.bones.map((b: THREE.Bone)=> b.name)
   return detectProfile(names)
 }

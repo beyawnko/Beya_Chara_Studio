@@ -33,7 +33,8 @@ const DIRECT_RULES: Partial<Record<ARKitName, { from: VRMPreset[], weight?: numb
   mouthFunnel: { from: ['O'] },
   mouthPucker: { from: ['O'] },
   mouthClose: { from: ['E'] },
-  mouthWide: undefined as any // not in 52; keep for future
+  // @ts-expect-error mouthWide is not a canonical ARKit shape, but we may use it internally.
+  mouthWide: undefined
 }
 
 export function generateARKitSetFromVRM(available: VRMPreset[]): GeneratedShape[] {
@@ -41,7 +42,7 @@ export function generateARKitSetFromVRM(available: VRMPreset[]): GeneratedShape[
   const out: GeneratedShape[] = []
 
   for (const name of ARKIT_52) {
-    const rule = (DIRECT_RULES as any)[name]
+    const rule = DIRECT_RULES[name]
     if (rule && rule.from.every((p:VRMPreset)=>have.has(p))) {
       out.push({ name: name as ARKitName, source: ['VRM'], confidence: 0.8 })
     } else {

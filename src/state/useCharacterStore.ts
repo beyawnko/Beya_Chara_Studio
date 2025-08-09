@@ -1,17 +1,18 @@
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
-import type { LoadedFBX } from '../types'
-import { loadFBX } from '../lib/loadFBX'
+
+import { loadAny } from '../lib/importers'
 import { addVariantAsMorph } from '../lib/morphs'
+import type { AnyAsset } from '../types'
 
 type Part = 'base'|'variant'|'headBase'|'headVariant'|'bodyBase'|'bodyVariant'
-type ActivePart = 'base'|'head'|'body'
+export type ActivePart = 'base'|'head'|'body'
 type Vec3 = { x:number, y:number, z:number }
 
 type State = {
-  base: LoadedFBX | null
-  head: LoadedFBX | null
-  body: LoadedFBX | null
+  base: AnyAsset | null
+  head: AnyAsset | null
+  body: AnyAsset | null
   activePart: ActivePart
   errors: string[]
   variants: string[]
@@ -61,8 +62,8 @@ export const useCharacterStore = create<State>()(persist((set,get)=> ({
     const pushErr = (msg:string) => set(s => ({ errors: [...s.errors, msg] }))
     try {
       if (kind === 'base') {
-        const fb = await loadFBX(files[0])
-        set({ base: fb, morphKeys: [], morphWeights: {}, variants: [], errors: [] })
+        const asset = await loadAny(files[0])
+        set({ base: asset, morphKeys: [], morphWeights: {}, variants: [], errors: [] })
         return
       }
       if (kind === 'variant') {
@@ -70,18 +71,19 @@ export const useCharacterStore = create<State>()(persist((set,get)=> ({
         if (!base) { pushErr('Upload base first.'); return }
         for (const f of files) {
           try {
-            const v = await loadFBX(f, { asVariantOf: base })
+            const v = await loadAny(f, { asVariantOf: base })
             const key = await addVariantAsMorph(base, v)
             set(s => ({ variants: [...s.variants, f.name], morphKeys: [...s.morphKeys, key] }))
-          } catch (e:any) {
-            pushErr(`${f.name}: ${e.message ?? e}`)
+          } catch (e: unknown) {
+            const msg = e instanceof Error ? e.message : String(e)
+            pushErr(`${f.name}: ${msg}`)
           }
         }
         return
       }
       if (kind === 'headBase') {
-        const fb = await loadFBX(files[0])
-        set({ head: fb, errors: [] })
+        const asset = await loadAny(files[0])
+        set({ head: asset, errors: [] })
         return
       }
       if (kind === 'headVariant') {
@@ -89,18 +91,19 @@ export const useCharacterStore = create<State>()(persist((set,get)=> ({
         if (!head) { pushErr('Upload head base first.'); return }
         for (const f of files) {
           try {
-            const v = await loadFBX(f, { asVariantOf: head })
+            const v = await loadAny(f, { asVariantOf: head })
             const key = await addVariantAsMorph(head, v)
             set(s => ({ variants: [...s.variants, f.name], morphKeys: [...s.morphKeys, key] }))
-          } catch (e:any) {
-            pushErr(`${f.name}: ${e.message ?? e}`)
+          } catch (e: unknown) {
+            const msg = e instanceof Error ? e.message : String(e)
+            pushErr(`${f.name}: ${msg}`)
           }
         }
         return
       }
       if (kind === 'bodyBase') {
-        const fb = await loadFBX(files[0])
-        set({ body: fb, errors: [] })
+        const asset = await loadAny(files[0])
+        set({ body: asset, errors: [] })
         return
       }
       if (kind === 'bodyVariant') {
@@ -108,17 +111,19 @@ export const useCharacterStore = create<State>()(persist((set,get)=> ({
         if (!body) { pushErr('Upload body base first.'); return }
         for (const f of files) {
           try {
-            const v = await loadFBX(f, { asVariantOf: body })
+            const v = await loadAny(f, { asVariantOf: body })
             const key = await addVariantAsMorph(body, v)
             set(s => ({ variants: [...s.variants, f.name], morphKeys: [...s.morphKeys, key] }))
-          } catch (e:any) {
-            pushErr(`${f.name}: ${e.message ?? e}`)
+          } catch (e: unknown) {
+            const msg = e instanceof Error ? e.message : String(e)
+            pushErr(`${f.name}: ${msg}`)
           }
         }
         return
       }
-    } catch (e:any) {
-      pushErr(e.message ?? String(e))
+    } catch (e: unknown) {
+      const msg = e instanceof Error ? e.message : String(e)
+      pushErr(msg)
     }
   }
 }), { name:'char-morphs' }))

@@ -1,5 +1,6 @@
 import * as THREE from 'three'
 import { GLTFExporter } from 'three/examples/jsm/exporters/GLTFExporter.js'
+
 import type { LoadedFBX } from '../types'
 
 export async function exportGLBBufferCombined(body: LoadedFBX|null, head: LoadedFBX|null, opts?: { bodyAllow?: Set<number>, headAllow?: Set<number> }): Promise<ArrayBuffer> {

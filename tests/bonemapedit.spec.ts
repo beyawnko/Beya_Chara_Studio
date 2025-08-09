@@ -1,13 +1,30 @@
-import { describe, it, expect } from 'vitest'
 import * as THREE from 'three'
-import { rebindHeadToBody } from '../src/lib/retarget'
+import { describe, expect,it, vi } from 'vitest'
 
-function mockFBX(names: string[]): any {
+import { rebindHeadToBody } from '../src/lib/retarget'
+import { LoadedFBX } from '../src/types'
+
+vi.mock('../src/lib/pool', () => ({
+  createPool: () => ({
+    run: vi.fn().mockImplementation(async (name, args) => {
+      if (name === 'remapSkinIndex') {
+        return new Uint16Array(args.src.length)
+      }
+    }),
+    dispose: vi.fn(),
+  }),
+}))
+
+function mockFBX(names: string[]): LoadedFBX {
   const bones = names.map(n => { const b = new THREE.Bone(); b.name = n; return b })
+  const mesh = new THREE.SkinnedMesh(new THREE.BufferGeometry(), [])
+  mesh.bindMatrix = new THREE.Matrix4()
   return {
-    mesh: new THREE.SkinnedMesh(new THREE.BufferGeometry(), []),
+    name: 'mock',
+    mesh: mesh,
     geometry: new THREE.BufferGeometry().setAttribute('skinIndex', new THREE.BufferAttribute(new Uint16Array(4), 4)).setAttribute('skinWeight', new THREE.BufferAttribute(new Float32Array(4), 4)),
-    skeleton: new THREE.Skeleton(bones)
+    skeleton: new THREE.Skeleton(bones),
+    bindMatrix: new THREE.Matrix4(),
   }
 }
 

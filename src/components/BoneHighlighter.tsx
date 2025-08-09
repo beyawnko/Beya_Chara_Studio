@@ -1,6 +1,7 @@
+import { useFrame } from '@react-three/fiber'
 import React, { useMemo } from 'react'
 import * as THREE from 'three'
-import { useFrame } from '@react-three/fiber'
+
 import { useCharacterStore } from '../state/useCharacterStore'
 
 export function BoneHighlighter() {

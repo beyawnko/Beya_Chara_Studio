@@ -1,5 +1,6 @@
 import * as THREE from 'three'
 import { GLTFExporter } from 'three/examples/jsm/exporters/GLTFExporter.js'
+
 import type { LoadedFBX } from '../types'
 
 export async function exportGLBBuffer(asset: LoadedFBX, opts?: { materialAllow?: Set<number> }): Promise<ArrayBuffer> {
@@ -12,7 +13,7 @@ export async function exportGLBBuffer(asset: LoadedFBX, opts?: { materialAllow?:
     mesh.material = mesh.material.map((m, i) => {
       if (!opts.materialAllow!.has(i)) {
         const mm = new THREE.MeshBasicMaterial({ transparent: true, opacity: 0, depthWrite: false })
-        mm.name = (m as any)?.name || `hidden_${i}`
+        mm.name = m.name || `hidden_${i}`
         return mm
       }
       return m

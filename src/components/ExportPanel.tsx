@@ -1,7 +1,9 @@
 import React, { useMemo, useState } from 'react'
-import { useCharacterStore } from '../state/useCharacterStore'
-import { exportGLB, exportGLBBuffer, exportGLBBufferCombined } from '../lib/exportGLB'
+import * as THREE from 'three'
+
+import { exportGLB, exportGLBBufferCombined } from '../lib/exportGLB'
 import { getMorphMeta } from '../lib/morphs'
+import { useCharacterStore } from '../state/useCharacterStore'
 
 export function ExportPanel() {
   const base = useCharacterStore(s => s.base)
@@ -17,7 +19,7 @@ export function ExportPanel() {
     if (!asset?.mesh) return undefined
     const matArr = Array.isArray(asset.mesh.material) ? asset.mesh.material : [asset.mesh.material]
     const allow = new Set<number>()
-    matArr.forEach((m:any, i:number) => {
+    matArr.forEach((m: THREE.Material, i:number) => {
       const key = `${m?.name || 'mat'}#${i}`
       const val = assign[key] || 'none'
       if (active==='head' && val==='head') allow.add(i)
@@ -32,7 +34,7 @@ export function ExportPanel() {
     const headAllow = new Set<number>(), bodyAllow = new Set<number>()
     if (head?.mesh) {
       const arr = Array.isArray(head.mesh.material) ? head.mesh.material : [head.mesh.material]
-      arr.forEach((m:any,i:number)=>{
+      arr.forEach((m: THREE.Material,i:number)=>{
         const key = `${m?.name || 'mat'}#${i}`
         const val = assign[key] || 'none'
         if (val==='head') headAllow.add(i)
@@ -40,7 +42,7 @@ export function ExportPanel() {
     }
     if (body?.mesh) {
       const arr = Array.isArray(body.mesh.material) ? body.mesh.material : [body.mesh.material]
-      arr.forEach((m:any,i:number)=>{
+      arr.forEach((m: THREE.Material,i:number)=>{
         const key = `${m?.name || 'mat'}#${i}`
         const val = assign[key] || 'none'
         if (val==='body') bodyAllow.add(i)

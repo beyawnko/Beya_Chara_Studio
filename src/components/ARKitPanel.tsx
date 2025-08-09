@@ -1,16 +1,17 @@
 import React, { useMemo, useState } from 'react'
-import { useCharacterStore } from '../state/useCharacterStore'
-import { ARKIT_52, generateARKitSetFromVRM } from '../lib/arkit'
+
+import { ARKIT_52, generateARKitSetFromVRM, GeneratedShape } from '../lib/arkit'
 import { synthesizeARKitMorphs } from '../lib/arkitSynthesis'
+import { useCharacterStore } from '../state/useCharacterStore'
 
 export function ARKitPanel() {
   const base = useCharacterStore(s => s.base)
   const head = useCharacterStore(s => s.head)
   const active = useCharacterStore(s => s.activePart)
   const asset = active==='head' ? head : base
-  const [generated, setGenerated] = useState<any[]|null>(null)
+  const [generated, setGenerated] = useState<GeneratedShape[]|null>(null)
 
-  const vrmPresets = (asset as any)?.vrmPresets as string[] | undefined
+  const vrmPresets = asset?.vrmPresets
 
   const coverage = useMemo(()=>{
     const morphKeys = useCharacterStore.getState().morphKeys
@@ -42,7 +43,7 @@ export function ARKitPanel() {
               synthesizeARKitMorphs(asset!)
               // refresh keys by poking store (rudimentary)
               const s = useCharacterStore.getState()
-              const dict = (asset!.geometry as any).morphTargetsDictionary || {}
+              const dict = (asset!.geometry as THREE.BufferGeometry & { morphTargetsDictionary: { [key: string]: number } }).morphTargetsDictionary || {}
               const keys = Object.keys(dict)
               s.morphKeys = keys
               s.morphWeights = Object.fromEntries(keys.map(k=>[k, s.morphWeights[k] ?? 0]))
@@ -53,7 +54,7 @@ export function ARKitPanel() {
           {canGen && (
             <div style={{marginTop:8}}>
               <button className="btn" onClick={()=>{
-                const mapped = generateARKitSetFromVRM(vrmPresets as any)
+                const mapped = generateARKitSetFromVRM(vrmPresets!)
                 setGenerated(mapped)
               }}>Analyze VRM presets → ARKit (report)</button>
               {generated && <div><small>Generated {generated.length} shape reports (VRM/SYNTH). Use the button above to actually add morph targets.</small></div>}

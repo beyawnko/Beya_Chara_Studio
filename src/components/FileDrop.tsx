@@ -1,4 +1,5 @@
 import React, { useCallback } from 'react'
+
 import { useCharacterStore } from '../state/useCharacterStore'
 
 export function FileDrop({ kind }:{ kind:'base'|'variant'|'headBase'|'headVariant'|'bodyBase'|'bodyVariant' }) {
@@ -15,13 +16,13 @@ export function FileDrop({ kind }:{ kind:'base'|'variant'|'headBase'|'headVarian
   const multi = kind==='variant' || kind==='headVariant' || kind==='bodyVariant'
   const handle = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(e.target.files ?? [])
-    onFiles(kind as any, files)
+    onFiles(kind, files)
     e.currentTarget.value = ''
   }, [kind, onFiles])
   return (
     <div className="drop">
       <div>{label}</div>
-      <input type="file" accept=".fbx" multiple={multi} onChange={handle} />
+      <input type="file" accept=".fbx,.glb,.gltf,.vrm" multiple={multi} onChange={handle} />
       <small>{kind.endsWith('Base') ? 'Base first.' : 'Variants must match topology & skin.'}</small>
     </div>
   )

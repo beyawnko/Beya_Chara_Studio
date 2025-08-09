@@ -1,6 +1,7 @@
 import * as THREE from 'three'
 import { FBXLoader } from 'three/examples/jsm/loaders/FBXLoader.js'
-import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js'
+import { GLTF,GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js'
+
 import type { LoadedFBX } from '../types'
 import { extractVRMPresetsFromGLTF } from './vrm'
 
@@ -20,7 +21,9 @@ function sanitizeSkinned(skinned: THREE.SkinnedMesh) {
 
 function firstSkinned(root: THREE.Object3D): THREE.SkinnedMesh | null {
   let target: THREE.SkinnedMesh | null = null
-  root.traverse((o:any)=>{ if (o.isSkinnedMesh && !target) target = o })
+  root.traverse((o: THREE.Object3D)=>{
+    if (o instanceof THREE.SkinnedMesh && !target) target = o
+  })
   return target
 }
 
@@ -49,10 +52,10 @@ export async function loadAny(file: File, opts: { asVariantOf?: LoadedFBX } = {}
 
   if (ext === 'glb' || ext === 'gltf' || ext === 'vrm') {
     const loader = new GLTFLoader()
-    const gltf = await new Promise<any>((resolve, reject) => {
+    const gltf = await new Promise<GLTF>((resolve, reject) => {
       loader.parse(ab, '/', resolve, reject)
     })
-    const root = gltf.scene as THREE.Object3D
+    const root = gltf.scene
     const sk = firstSkinned(root)
     if (!sk) throw new Error('No SkinnedMesh found in GLTF/VRM')
 
@@ -65,7 +68,9 @@ export async function loadAny(file: File, opts: { asVariantOf?: LoadedFBX } = {}
     try {
       const presets = extractVRMPresetsFromGLTF(gltf)
       if (presets?.length) (out as AnyAsset).vrmPresets = presets
-    } catch {}
+    } catch {
+      // ignore errors, not all GLTFs are VRMs
+    }
 
     if (opts.asVariantOf) {
       const base = opts.asVariantOf.geometry

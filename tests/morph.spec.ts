@@ -1,5 +1,6 @@
-import { describe, it, expect } from 'vitest'
 import * as THREE from 'three'
+import { describe, expect,it } from 'vitest'
+
 import { attachMorph } from '../src/lib/morphs'
 
 describe('morph attachment', () => {
@@ -13,7 +14,7 @@ describe('morph attachment', () => {
     expect(geo.morphAttributes.position?.length).toBe(1)
     expect(geo.morphTargetsRelative).toBe(true)
     // index mapping
-    // @ts-ignore
+    // @ts-expect-error Property 'morphTargetsDictionary' does not exist on type 'BufferGeometry'.
     expect(geo.morphTargetsDictionary['Test']).toBe(0)
   })
 })

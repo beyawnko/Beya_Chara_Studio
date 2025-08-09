@@ -1,4 +1,6 @@
 import React, { useMemo } from 'react'
+import * as THREE from 'three'
+
 import { useCharacterStore } from '../state/useCharacterStore'
 
 type Assign = 'head'|'body'|'none'
@@ -16,7 +18,7 @@ export function MaterialSplitPanel() {
   const mats = useMemo(() => {
     if (!mesh) return []
     const m = Array.isArray(mesh.material) ? mesh.material : [mesh.material]
-    return m.map((mat:any, idx:number) => ({ index: idx, name: mat?.name || `mat_${idx}` }))
+    return m.map((mat: THREE.Material, idx:number) => ({ index: idx, name: mat?.name || `mat_${idx}` }))
   }, [mesh])
 
   if (!mesh) return null
@@ -30,7 +32,7 @@ export function MaterialSplitPanel() {
         <tbody>
           {mats.map(({index,name}) => {
             const key = `${name}#${index}`
-            const val:Assign = (assign[key] as any) ?? 'none'
+            const val:Assign = assign[key] ?? 'none'
             return (
               <tr key={key}>
                 <td>{name}</td>
