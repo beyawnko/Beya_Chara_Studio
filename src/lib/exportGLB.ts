@@ -1,12 +1,14 @@
 import * as THREE from 'three'
 import { GLTFExporter } from 'three/examples/jsm/exporters/GLTFExporter.js'
+import { clone as cloneSkeleton } from 'three/examples/jsm/utils/SkeletonUtils.js'
 
 import type { LoadedFBX } from '../types'
 
 export async function exportGLBBuffer(asset: LoadedFBX, opts?: { materialAllow?: Set<number> }): Promise<ArrayBuffer> {
   const root = new THREE.Group()
-  const mesh = asset.mesh.clone()
-  mesh.skeleton = asset.mesh.skeleton
+  const mesh = cloneSkeleton(asset.mesh) as THREE.SkinnedMesh
+  // SkeletonUtils.clone() ensures the skeleton references the cloned bones.
+  // Overriding it would break the hierarchy, so only swap in a cloned geometry.
   mesh.geometry = asset.geometry.clone()
 
   if (opts?.materialAllow && Array.isArray(mesh.material)) {
