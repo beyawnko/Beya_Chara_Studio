@@ -1,9 +1,9 @@
 # GLB-only Character Morph Creator
 
-[![CI](https://github.com/<your-username>/<repo-name>/actions/workflows/ci.yml/badge.svg)](https://github.com/<your-username>/<repo-name>/actions/workflows/ci.yml)
-[![codecov](https://codecov.io/gh/<your-username>/<repo-name>/branch/main/graph/badge.svg?token=<CODECOV_TOKEN>)](https://codecov.io/gh/<your-username>/<repo-name>)
+[![CI](https://github.com/beyawnko/Beya_Chara_Studio/actions/workflows/ci.yml/badge.svg)](https://github.com/beyawnko/Beya_Chara_Studio/actions/workflows/ci.yml)
+[![codecov](https://codecov.io/gh/beyawnko/Beya_Chara_Studio/branch/main/graph/badge.svg?token=<CODECOV_TOKEN>)](https://codecov.io/gh/<your-username>/<repo-name>)
 
-Live demo (GitHub Pages): https://<your-username>.github.io/<repo-name>/
+Live demo (GitHub Pages): https://beyawnko.github.io/Beya_Chara_Studio/
 
 ## Scripts
 - `pnpm dev` — start Vite dev server
@@ -21,4 +21,4 @@ Live demo (GitHub Pages): https://<your-username>.github.io/<repo-name>/
 
 ## Pages base path
 - Vite `base` is controlled by `GITHUB_PAGES_BASE`. CI sets it to `/${repo}/`.
-- For local deploys, run: `GITHUB_PAGES_BASE=/your-repo/ pnpm build && pnpm deploy`
+- For local deploys, run: `GITHUB_PAGES_BASE=/Beya_Chara_Studio/ pnpm build && pnpm deploy`
