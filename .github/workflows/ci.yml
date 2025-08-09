@@ -25,7 +25,7 @@ jobs:
           cache: 'pnpm'
 
       - name: Install
-        run: pnpm install --frozen-lockfile=false
+        run: pnpm install --frozen-lockfile
 
       - name: Lint
         run: pnpm lint
@@ -58,7 +58,7 @@ jobs:
           cache: 'pnpm'
 
       - name: Install
-        run: pnpm install --frozen-lockfile=false
+        run: pnpm install --frozen-lockfile
 
       - name: Build (GitHub Pages base)
         run: GITHUB_PAGES_BASE=/${{ github.event.repository.name }}/ pnpm build
