@@ -1,0 +1,124 @@
+import { create } from 'zustand'
+import { persist } from 'zustand/middleware'
+import type { LoadedFBX } from '../types'
+import { loadFBX } from '../lib/loadFBX'
+import { addVariantAsMorph } from '../lib/morphs'
+
+type Part = 'base'|'variant'|'headBase'|'headVariant'|'bodyBase'|'bodyVariant'
+type ActivePart = 'base'|'head'|'body'
+type Vec3 = { x:number, y:number, z:number }
+
+type State = {
+  base: LoadedFBX | null
+  head: LoadedFBX | null
+  body: LoadedFBX | null
+  activePart: ActivePart
+  errors: string[]
+  variants: string[]
+  morphKeys: string[]
+  morphWeights: Record<string, number>
+  materialAssign: Record<string, 'head'|'body'|'none'>
+  boneMap: Record<string, string>
+  headOffset: { position: Vec3, rotation: Vec3, scale: number }
+  selSrcBone?: string
+  selDstBone?: string
+  onFiles: (kind:Part, files: File[]) => Promise<void>
+  setMorphWeight: (key:string, v:number)=>void
+  setActivePart: (p:ActivePart)=>void
+  setMaterialAssign: (key:string, v:'head'|'body'|'none')=>void
+  setBoneMap: (src:string, dst:string)=>void
+  setHeadOffset: (o: Partial<{ position: Vec3, rotation: Vec3, scale: number }>)=>void
+  setSelectedBones: (src?:string, dst?:string)=>void
+  clearErrors: ()=>void
+}
+
+export const useCharacterStore = create<State>()(persist((set,get)=> ({
+  base: null,
+  head: null,
+  body: null,
+  activePart: 'base',
+  errors: [],
+  variants: [],
+  morphKeys: [],
+  morphWeights: {},
+  materialAssign: {},
+  boneMap: {},
+  headOffset: { position:{x:0,y:0,z:0}, rotation:{x:0,y:0,z:0}, scale:1 },
+  selSrcBone: undefined,
+  selDstBone: undefined,
+  clearErrors: () => set({ errors: [] }),
+  setActivePart: (p) => set({ activePart: p }),
+  setMorphWeight: (key, v) => set(s => ({ morphWeights: { ...s.morphWeights, [key]: v } })),
+  setMaterialAssign: (key, v) => set(s => ({ materialAssign: { ...s.materialAssign, [key]: v } })),
+  setBoneMap: (src, dst) => set(s => ({ boneMap: { ...s.boneMap, [src]: dst } })),
+  setHeadOffset: (o) => set(s => ({ headOffset: { 
+    position: o.position ?? s.headOffset.position,
+    rotation: o.rotation ?? s.headOffset.rotation,
+    scale: o.scale ?? s.headOffset.scale
+  }})),
+  setSelectedBones: (src, dst) => set({ selSrcBone: src, selDstBone: dst }),
+  onFiles: async (kind, files) => {
+    const pushErr = (msg:string) => set(s => ({ errors: [...s.errors, msg] }))
+    try {
+      if (kind === 'base') {
+        const fb = await loadFBX(files[0])
+        set({ base: fb, morphKeys: [], morphWeights: {}, variants: [], errors: [] })
+        return
+      }
+      if (kind === 'variant') {
+        const base = get().base
+        if (!base) { pushErr('Upload base first.'); return }
+        for (const f of files) {
+          try {
+            const v = await loadFBX(f, { asVariantOf: base })
+            const key = await addVariantAsMorph(base, v)
+            set(s => ({ variants: [...s.variants, f.name], morphKeys: [...s.morphKeys, key] }))
+          } catch (e:any) {
+            pushErr(`${f.name}: ${e.message ?? e}`)
+          }
+        }
+        return
+      }
+      if (kind === 'headBase') {
+        const fb = await loadFBX(files[0])
+        set({ head: fb, errors: [] })
+        return
+      }
+      if (kind === 'headVariant') {
+        const head = get().head
+        if (!head) { pushErr('Upload head base first.'); return }
+        for (const f of files) {
+          try {
+            const v = await loadFBX(f, { asVariantOf: head })
+            const key = await addVariantAsMorph(head, v)
+            set(s => ({ variants: [...s.variants, f.name], morphKeys: [...s.morphKeys, key] }))
+          } catch (e:any) {
+            pushErr(`${f.name}: ${e.message ?? e}`)
+          }
+        }
+        return
+      }
+      if (kind === 'bodyBase') {
+        const fb = await loadFBX(files[0])
+        set({ body: fb, errors: [] })
+        return
+      }
+      if (kind === 'bodyVariant') {
+        const body = get().body
+        if (!body) { pushErr('Upload body base first.'); return }
+        for (const f of files) {
+          try {
+            const v = await loadFBX(f, { asVariantOf: body })
+            const key = await addVariantAsMorph(body, v)
+            set(s => ({ variants: [...s.variants, f.name], morphKeys: [...s.morphKeys, key] }))
+          } catch (e:any) {
+            pushErr(`${f.name}: ${e.message ?? e}`)
+          }
+        }
+        return
+      }
+    } catch (e:any) {
+      pushErr(e.message ?? String(e))
+    }
+  }
+}), { name:'char-morphs' }))
