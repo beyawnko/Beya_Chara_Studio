@@ -41,3 +41,28 @@ it('createPool works without navigator', async () => {
   ;(globalThis as any).Worker = originalWorker
   vi.resetModules()
 })
+
+it('createPool uses default worker count', async () => {
+  runMock.mockClear()
+  runMock.mockResolvedValue({})
+
+  const workerInstances: URL[] = []
+  class MockWorker {
+    constructor(url: URL) {
+      workerInstances.push(url)
+    }
+    terminate() {}
+  }
+  vi.stubGlobal('Worker', MockWorker as any)
+  vi.stubGlobal('navigator', {})
+
+  const { createPool } = await import('../src/lib/pool')
+  const pool = createPool(new URL('https://example.com/worker.js'))
+  expect(workerInstances.length).toBe(3)
+  await pool.run('diffMorph', { basePos: new Float32Array(), varPos: new Float32Array() })
+  expect(runMock).toHaveBeenCalled()
+  pool.dispose()
+
+  vi.unstubAllGlobals()
+  vi.resetModules()
+})
