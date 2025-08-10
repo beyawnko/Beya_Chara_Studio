@@ -28,8 +28,8 @@ it('createPool works without navigator', async () => {
     writable: true
   })
 
-  const originalWorker = globalThis.Worker
-  ;(globalThis as any).Worker = MockWorker as any
+  const originalWorker: typeof Worker = globalThis.Worker
+  ;(globalThis as unknown as { Worker: typeof Worker }).Worker = MockWorker as unknown as typeof Worker
 
   const { createPool } = await import('../src/lib/pool')
   const pool = createPool(new URL('https://example.com/worker.js'))
@@ -43,7 +43,7 @@ it('createPool works without navigator', async () => {
     configurable: true,
     writable: true
   })
-  ;(globalThis as any).Worker = originalWorker
+  ;(globalThis as unknown as { Worker: typeof Worker }).Worker = originalWorker
   vi.resetModules()
 })
 
@@ -51,7 +51,7 @@ it('createPool uses default worker count', async () => {
   runMock.mockClear()
   runMock.mockResolvedValue({})
 
-  vi.stubGlobal('Worker', MockWorker as any)
+  vi.stubGlobal('Worker', MockWorker as unknown as typeof Worker)
   vi.stubGlobal('navigator', {})
 
   const { createPool } = await import('../src/lib/pool')

@@ -5,9 +5,17 @@ import { categorizeMorph } from './categorize'
 import { createPool } from './pool'
 
 let pool: ReturnType<typeof createPool> | null = null
-function ensurePool() {
+
+export function morphPool() {
   if (!pool) pool = createPool(new URL('../workers/morph.worker.ts', import.meta.url))
   return pool
+}
+
+export function disposeMorphPool() {
+  if (pool) {
+    pool.dispose()
+    pool = null
+  }
 }
 
 export async function addVariantAsMorph(base: LoadedFBX, variant: LoadedFBX): Promise<string> {
@@ -15,7 +23,7 @@ export async function addVariantAsMorph(base: LoadedFBX, variant: LoadedFBX): Pr
   const b = variant.geometry
   if (!a.getAttribute('position') || !b.getAttribute('position')) throw new Error('Missing positions')
   const idxA = a.getIndex(); const idxB = b.getIndex()
-  const compare = await ensurePool().run('compareTopology', {
+  const compare = await morphPool().run('compareTopology', {
     posCountA: a.getAttribute('position').count,
     posCountB: b.getAttribute('position').count,
     indexA: idxA?.array ?? null,
@@ -28,13 +36,13 @@ export async function addVariantAsMorph(base: LoadedFBX, variant: LoadedFBX): Pr
   const baseN = (a.getAttribute('normal') as THREE.BufferAttribute)?.array as Float32Array
   const varN  = (b.getAttribute('normal') as THREE.BufferAttribute)?.array as Float32Array
 
-  const { dPos, dN } = await ensurePool().run('diffMorph', { basePos, varPos, baseN, varN })
+  const { dPos, dN } = await morphPool().run('diffMorph', { basePos, varPos, baseN, varN })
 
   // similarity vs existing morphs (position only)
   const existing = a.morphAttributes.position ?? []
   let duplicateOf: string | null = null
   for (let i=0;i<existing.length;i++) {
-    const sim = await ensurePool().run('cosineSim', { a: existing[i].array as Float32Array, b: dPos })
+    const sim = await morphPool().run('cosineSim', { a: existing[i].array as Float32Array, b: dPos })
     if (sim >= 0.98) {
       // get morph name by reverse lookup
       const dict = a.morphTargetsDictionary || {}
