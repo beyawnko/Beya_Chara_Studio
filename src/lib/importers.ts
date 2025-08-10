@@ -7,6 +7,12 @@ import { extractVRMPresetsFromGLTF } from './vrm'
 
 export type AnyAsset = LoadedFBX & { vrmPresets?: string[] }
 
+export function validateTopology(base: THREE.BufferGeometry, geo: THREE.BufferGeometry) {
+  const samePos = base.getAttribute('position').count === geo.getAttribute('position').count
+  const sameIdx = (base.getIndex()?.count ?? 0) === (geo.getIndex()?.count ?? 0)
+  if (!samePos || !sameIdx) throw new Error('Topology mismatch vs base')
+}
+
 function sanitizeSkinned(skinned: THREE.SkinnedMesh) {
   const geo = skinned.geometry.clone()
   if (!geo.getAttribute('position')) throw new Error('Missing positions')
@@ -30,6 +36,7 @@ function firstSkinned(root: THREE.Object3D): THREE.SkinnedMesh | null {
 export async function loadAny(file: File, opts: { asVariantOf?: LoadedFBX } = {}): Promise<AnyAsset> {
   const name = file.name.replace(/\.[^.]+$/, '')
   const ext = file.name.split('.').pop()?.toLowerCase()
+  if (!ext) throw new Error('File has no extension')
   const ab = await file.arrayBuffer()
 
   if (ext === 'fbx') {
@@ -41,11 +48,7 @@ export async function loadAny(file: File, opts: { asVariantOf?: LoadedFBX } = {}
       name, mesh: skinned, geometry: geo, skeleton: skinned.skeleton, bindMatrix: skinned.bindMatrix.clone()
     }
     if (opts.asVariantOf) {
-      const base = opts.asVariantOf.geometry
-      if ((base.getAttribute('position').count !== geo.getAttribute('position').count) ||
-          ((base.getIndex()?.count ?? 0) !== (geo.getIndex()?.count ?? 0))) {
-        throw new Error('Topology mismatch vs base')
-      }
+      validateTopology(opts.asVariantOf.geometry, geo)
     }
     return out
   }
@@ -73,11 +76,7 @@ export async function loadAny(file: File, opts: { asVariantOf?: LoadedFBX } = {}
     }
 
     if (opts.asVariantOf) {
-      const base = opts.asVariantOf.geometry
-      if ((base.getAttribute('position').count !== geo.getAttribute('position').count) ||
-          ((base.getIndex()?.count ?? 0) !== (geo.getIndex()?.count ?? 0))) {
-        throw new Error('Topology mismatch vs base')
-      }
+      validateTopology(opts.asVariantOf.geometry, geo)
     }
     return out
   }

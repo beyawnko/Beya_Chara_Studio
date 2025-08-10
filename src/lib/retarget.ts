@@ -1,25 +1,15 @@
 import * as THREE from 'three'
 
 import type { LoadedFBX } from '../types'
-import { createPool } from './pool'
+import { createPoolManager } from './poolManager'
 import { detectProfile,PROFILES } from './skeleton'
 
 export type BoneMap = Record<string, string>
 
 const NECK_ALIASES = ['neck_01','neck','J_Neck','UpperChest','upperChest']
-let pool: ReturnType<typeof createPool> | null = null
-
-export function retargetPool() {
-  if (!pool) pool = createPool(new URL('../workers/retarget.worker.ts', import.meta.url))
-  return pool
-}
-
-export function disposeRetargetPool() {
-  if (pool) {
-    pool.dispose()
-    pool = null
-  }
-}
+const { getPool, disposePool } = createPoolManager(new URL('../workers/retarget.worker.ts', import.meta.url))
+export const retargetPool = getPool
+export const disposeRetargetPool = disposePool
 
 export function suggestBoneMap(src: THREE.Skeleton, dst: THREE.Skeleton): BoneMap {
   const map: BoneMap = {}
