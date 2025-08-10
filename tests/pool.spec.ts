@@ -1,6 +1,18 @@
-import { it, expect, vi } from 'vitest'
+import { beforeEach, expect, it, vi } from 'vitest'
 
 const runMock = vi.fn()
+
+const workerInstances: URL[] = []
+class MockWorker {
+  constructor(url: URL) {
+    workerInstances.push(url)
+  }
+  terminate() {}
+}
+
+beforeEach(() => {
+  workerInstances.length = 0
+})
 
 vi.mock('comlink', () => ({
   wrap: () => ({ diffMorph: runMock })
@@ -16,13 +28,6 @@ it('createPool works without navigator', async () => {
     writable: true
   })
 
-  const workerInstances: URL[] = []
-  class MockWorker {
-    constructor(_url: URL) {
-      workerInstances.push(_url)
-    }
-    terminate() {}
-  }
   const originalWorker = globalThis.Worker
   ;(globalThis as any).Worker = MockWorker as any
 
@@ -46,13 +51,6 @@ it('createPool uses default worker count', async () => {
   runMock.mockClear()
   runMock.mockResolvedValue({})
 
-  const workerInstances: URL[] = []
-  class MockWorker {
-    constructor(url: URL) {
-      workerInstances.push(url)
-    }
-    terminate() {}
-  }
   vi.stubGlobal('Worker', MockWorker as any)
   vi.stubGlobal('navigator', {})
 
