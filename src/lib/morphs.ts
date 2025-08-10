@@ -2,21 +2,11 @@ import * as THREE from 'three'
 
 import type { LoadedFBX } from '../types'
 import { categorizeMorph } from './categorize'
-import { createPool } from './pool'
+import { createPoolManager } from './poolManager'
 
-let pool: ReturnType<typeof createPool> | null = null
-
-export function morphPool() {
-  if (!pool) pool = createPool(new URL('../workers/morph.worker.ts', import.meta.url))
-  return pool
-}
-
-export function disposeMorphPool() {
-  if (pool) {
-    pool.dispose()
-    pool = null
-  }
-}
+const { getPool, disposePool } = createPoolManager(new URL('../workers/morph.worker.ts', import.meta.url))
+export const morphPool = getPool
+export const disposeMorphPool = disposePool
 
 export async function addVariantAsMorph(base: LoadedFBX, variant: LoadedFBX): Promise<string> {
   const a = base.geometry
