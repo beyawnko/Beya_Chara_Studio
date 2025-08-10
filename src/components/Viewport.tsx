@@ -6,6 +6,7 @@ import * as THREE from 'three'
 import { useCharacterStore } from '../state/useCharacterStore'
 import { BoneHighlighter } from './BoneHighlighter'
 import { HeadTransformGizmo } from './HeadTransformGizmo'
+import { normalizeMeshMaterials } from '../lib/materials'
 
 export function Viewport() {
   const base = useCharacterStore(s => s.base)
@@ -24,12 +25,10 @@ export function Viewport() {
     const created: THREE.Material[] = []
     mesh.traverse((obj: THREE.Object3D) => {
       if (obj instanceof THREE.Mesh) {
-        const m = obj.material
-        if (!m || !m.isMeshStandardMaterial) {
-          const mat = new THREE.MeshStandardMaterial({ metalness: 0.0, roughness: 0.5 })
-          obj.material = mat
-          created.push(mat)
-        }
+        // Normalize materials: ensure each mesh uses MeshStandardMaterial even when
+        // multiple materials are assigned. Any newly created materials will be
+        // tracked in `created` for disposal when the component unmounts.
+        normalizeMeshMaterials(obj, created)
       }
     })
     return () => {
