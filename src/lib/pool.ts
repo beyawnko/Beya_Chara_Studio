@@ -27,15 +27,19 @@ export type Jobs = {
   remapSkinIndex(args: RemapSkinIndexArgs): Uint16Array | Uint32Array
 }
 
-export function createPool(url: URL, size = Math.max(1, (navigator.hardwareConcurrency ?? 4) - 1)) {
-  const workers = Array.from({length: size}, () => new Worker(url, { type: 'module' }))
+const cores = typeof navigator !== 'undefined' ? navigator.hardwareConcurrency ?? 4 : 4
+
+export function createPool(url: URL, size = Math.max(1, cores - 1)) {
+  const workers = Array.from({ length: size }, () => new Worker(url, { type: 'module' }))
   const remotes = workers.map(w => Comlink.wrap<Jobs>(w))
   let i = 0
   return {
     async run<K extends keyof Jobs>(fn: K, payload: Parameters<Jobs[K]>[0]): Promise<ReturnType<Jobs[K]>> {
-      const r = remotes[i = (i + 1) % remotes.length]
+      const r = remotes[(i = (i + 1) % remotes.length)]
       return await r[fn](payload)
     },
-    dispose() { workers.forEach(w => w.terminate()) }
+    dispose() {
+      workers.forEach(w => w.terminate())
+    }
   }
 }
