@@ -21,14 +21,20 @@ export function Viewport() {
 
   useEffect(() => {
     if (!mesh) return
+    const created: THREE.Material[] = []
     mesh.traverse((obj: THREE.Object3D) => {
       if (obj instanceof THREE.Mesh) {
         const m = obj.material
         if (!m || !m.isMeshStandardMaterial) {
-          obj.material = new THREE.MeshStandardMaterial({ metalness: 0.0, roughness: 0.5 })
+          const mat = new THREE.MeshStandardMaterial({ metalness: 0.0, roughness: 0.5 })
+          obj.material = mat
+          created.push(mat)
         }
       }
     })
+    return () => {
+      created.forEach(m => m.dispose())
+    }
   }, [mesh])
 
   useEffect(() => {

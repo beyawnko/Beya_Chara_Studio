@@ -4,7 +4,7 @@ export function createPoolManager(workerUrl: URL) {
   let pool: ReturnType<typeof createPool> | null = null
 
   return {
-    getPool: () => {
+    getPool: (): Pick<ReturnType<typeof createPool>, 'run'> => {
       if (!pool) pool = createPool(workerUrl)
       const { run } = pool
       return { run }
