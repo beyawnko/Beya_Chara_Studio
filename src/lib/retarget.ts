@@ -8,9 +8,17 @@ export type BoneMap = Record<string, string>
 
 const NECK_ALIASES = ['neck_01','neck','J_Neck','UpperChest','upperChest']
 let pool: ReturnType<typeof createPool> | null = null
-function ensurePool() {
+
+export function retargetPool() {
   if (!pool) pool = createPool(new URL('../workers/retarget.worker.ts', import.meta.url))
   return pool
+}
+
+export function disposeRetargetPool() {
+  if (pool) {
+    pool.dispose()
+    pool = null
+  }
 }
 
 export function suggestBoneMap(src: THREE.Skeleton, dst: THREE.Skeleton): BoneMap {
@@ -108,7 +116,7 @@ export async function rebindHeadToBody(head: LoadedFBX, body: LoadedFBX, map: Bo
   }
 
   const skinSrc = skinIndex.array as Uint16Array | Uint32Array
-  const out = await ensurePool().run('remapSkinIndex', {
+  const out = await retargetPool().run('remapSkinIndex', {
     src: skinSrc,
     remap,
     fallback: neckIdx

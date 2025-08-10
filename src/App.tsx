@@ -10,12 +10,27 @@ import { PartTabs } from './components/PartTabs'
 import { RetargetPanel } from './components/RetargetPanel'
 import { SkeletonBadge } from './components/SkeletonBadge'
 import { Viewport } from './components/Viewport'
+import { disposeMorphPool } from './lib/morphs'
+import { disposeRetargetPool } from './lib/retarget'
 import { useCharacterStore } from './state/useCharacterStore'
 
 export default function App() {
   const base = useCharacterStore(s => s.base)
   const variants = useCharacterStore(s => s.variants)
   const activePart = useCharacterStore(s => s.activePart)
+
+  React.useEffect(() => {
+    if (typeof window === 'undefined') return
+    const cleanup = () => {
+      disposeMorphPool()
+      disposeRetargetPool()
+    }
+    window.addEventListener('beforeunload', cleanup)
+    return () => {
+      cleanup()
+      window.removeEventListener('beforeunload', cleanup)
+    }
+  }, [])
 
   return (
     <div className="row">
