@@ -6,7 +6,8 @@ export function createPoolManager(workerUrl: URL) {
   return {
     getPool: () => {
       if (!pool) pool = createPool(workerUrl)
-      return pool
+      const { run } = pool
+      return { run }
     },
     disposePool: () => {
       if (pool) {
