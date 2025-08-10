@@ -1,6 +1,6 @@
 import { Environment,OrbitControls } from '@react-three/drei'
 import { Canvas } from '@react-three/fiber'
-import React, { useMemo } from 'react'
+import React, { useEffect } from 'react'
 import * as THREE from 'three'
 
 import { useCharacterStore } from '../state/useCharacterStore'
@@ -19,7 +19,7 @@ export function Viewport() {
   const active = activePart==='head' ? head : activePart==='body' ? body : base
   const mesh = active?.mesh
 
-  useMemo(() => {
+  useEffect(() => {
     if (!mesh) return
     mesh.traverse((obj: THREE.Object3D) => {
       if (obj instanceof THREE.Mesh) {
@@ -31,7 +31,7 @@ export function Viewport() {
     })
   }, [mesh])
 
-  useMemo(() => {
+  useEffect(() => {
     if (!mesh) return
     morphKeys.forEach((k, i) => {
       if (mesh.morphTargetInfluences) {
@@ -40,7 +40,7 @@ export function Viewport() {
     })
   }, [mesh, weights, morphKeys])
 
-  useMemo(() => {
+  useEffect(() => {
     if (!mesh) return
     const mats = Array.isArray(mesh.material) ? mesh.material : [mesh.material]
     mats.forEach((m: THREE.Material, i:number) => {
