@@ -8,9 +8,10 @@ import { extractVRMPresetsFromGLTF } from './vrm'
 export type AnyAsset = LoadedFBX & { vrmPresets?: string[] }
 
 export function validateTopology(base: THREE.BufferGeometry, geo: THREE.BufferGeometry) {
-  const samePos = base.getAttribute('position').count === geo.getAttribute('position').count
-  const sameIdx = (base.getIndex()?.count ?? 0) === (geo.getIndex()?.count ?? 0)
-  if (!samePos || !sameIdx) throw new Error('Topology mismatch vs base')
+  const posA = base.getAttribute('position').count, posB = geo.getAttribute('position').count;
+  if (posA !== posB) throw new Error(`Topology mismatch: vertex count ${posA} vs ${posB}`);
+  const idxA = base.getIndex()?.count ?? 0, idxB = geo.getIndex()?.count ?? 0;
+  if (idxA !== idxB) throw new Error(`Topology mismatch: index count ${idxA} vs ${idxB}`);
 }
 
 function sanitizeSkinned(skinned: THREE.SkinnedMesh) {
