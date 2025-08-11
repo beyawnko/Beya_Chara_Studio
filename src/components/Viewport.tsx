@@ -6,7 +6,8 @@ import * as THREE from 'three'
 import { useCharacterStore } from '../state/useCharacterStore'
 import { BoneHighlighter } from './BoneHighlighter'
 import { HeadTransformGizmo } from './HeadTransformGizmo'
-import { normalizeMeshMaterials } from '../lib/materials'
+import { getMaterialSlotId, normalizeMeshMaterials } from '../lib/materials'
+import { PerfHUD } from './PerfHUD'
 
 export function Viewport() {
   const base = useCharacterStore(s => s.base)
@@ -46,7 +47,7 @@ export function Viewport() {
     if (!mesh) return
     const mats = Array.isArray(mesh.material) ? mesh.material : [mesh.material]
     mats.forEach((m: THREE.Material, i:number) => {
-      const key = `${m?.name || 'mat'}#${i}`
+      const key = getMaterialSlotId(mesh, i)
       const val = assign[key] || 'none'
       let visible = true
       if (activePart==='head') visible = (val === 'head' || val === 'none')
