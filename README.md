@@ -20,3 +20,17 @@ Live demo (GitHub Pages): https://beyawnko.github.io/Beya_Chara_Studio/
 ## Pages base path
 - Vite `base` is controlled by `GITHUB_PAGES_BASE`. CI sets it to `/${repo}/`.
 - For local deploys, run: `GITHUB_PAGES_BASE=/Beya_Chara_Studio/ pnpm build && pnpm deploy`
+
+---
+
+## Development HUD (dev-only)
+
+A lightweight overlay shows **FPS**, **Draw Calls**, and **Visible Materials**.
+- Toggle: **Ctrl+Shift+H**
+- Only active in dev builds (`import.meta.env.DEV`)
+- Materials count ignores fully transparent (masked) materials
+
+## Tests
+- **Unit (Vitest):** `tests/materials.spec.ts`
+- **E2E (Playwright):** `e2e/material-visibility.spec.ts` (if you enable fixture & selectors)
+

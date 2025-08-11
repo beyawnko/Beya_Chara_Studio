@@ -25,9 +25,6 @@ export function Viewport() {
     const created: THREE.Material[] = []
     mesh.traverse((obj: THREE.Object3D) => {
       if (obj instanceof THREE.Mesh) {
-        // Normalize materials: ensure each mesh uses MeshStandardMaterial even when
-        // multiple materials are assigned. Any newly created materials will be
-        // tracked in `created` for disposal when the component unmounts.
         normalizeMeshMaterials(obj, created)
       }
     })
@@ -69,6 +66,7 @@ export function Viewport() {
       <ambientLight intensity={0.35} />
       <directionalLight position={[5,10,5]} intensity={0.8} />
       {mesh && <primitive object={mesh} />}
+      {import.meta.env.DEV && <PerfHUD />}
       <HeadTransformGizmo />
       <BoneHighlighter />
       <Environment preset="city" />
