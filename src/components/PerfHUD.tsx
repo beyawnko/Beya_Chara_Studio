@@ -1,11 +1,12 @@
-import { useFrame, useThree } from '@react-three/fiber'
 import React, { useState } from 'react'
+import { useFrame, useThree } from '@react-three/fiber'
 
 /** Simple dev-only HUD showing renderer statistics */
+const UPDATE_INTERVAL = 0.5 // seconds
+
 export function PerfHUD() {
   const { gl } = useThree()
   const [info, setInfo] = useState(gl.info)
-  const UPDATE_INTERVAL = 0.5 // seconds
   const lastUpdate = React.useRef(0)
   useFrame((state) => {
     if (state.clock.elapsedTime - lastUpdate.current > UPDATE_INTERVAL) {
