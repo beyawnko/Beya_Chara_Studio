@@ -1,5 +1,8 @@
 import * as THREE from 'three'
 
+// FNV-1a variant mixing step for hashing
+const fnv1aMix = (h: number): number =>
+  h + (h << 1) + (h << 4) + (h << 7) + (h << 8) + (h << 24)
 /**
  * Upgrade any material to MeshStandardMaterial, preserving basic properties
  * and tracking newly created materials for later disposal.
@@ -39,17 +42,16 @@ function hashGeometry(geom: THREE.BufferGeometry): string {
   const pos = geom.getAttribute('position') as THREE.BufferAttribute | undefined
   const idx = geom.getIndex()
   let hash = 2166136261
-  const applyMix = (h: number) => h + (h << 1) + (h << 4) + (h << 7) + (h << 8) + (h << 24)
   if (pos && pos.array.length >= 3) {
     const arr = pos.array as ArrayLike<number>
     for (let i = 0; i < Math.min(9, arr.length); i++) {
       hash ^= Math.round(arr[i] * 1e3)
-      hash = applyMix(hash)
+      hash = fnv1aMix(hash)
     }
   }
   if (idx) {
     hash ^= idx.count
-    hash = applyMix(hash)
+    hash = fnv1aMix(hash)
   }
   return (hash >>> 0).toString(36)
 }
