@@ -39,16 +39,17 @@ function hashGeometry(geom: THREE.BufferGeometry): string {
   const pos = geom.getAttribute('position') as THREE.BufferAttribute | undefined
   const idx = geom.getIndex()
   let hash = 2166136261
+  const applyMix = (h: number) => h + (h << 1) + (h << 4) + (h << 7) + (h << 8) + (h << 24)
   if (pos && pos.array.length >= 3) {
     const arr = pos.array as ArrayLike<number>
     for (let i = 0; i < Math.min(9, arr.length); i++) {
       hash ^= Math.round(arr[i] * 1e3)
-      hash += (hash << 1) + (hash << 4) + (hash << 7) + (hash << 8) + (hash << 24)
+      hash = applyMix(hash)
     }
   }
   if (idx) {
     hash ^= idx.count
-    hash += (hash << 1) + (hash << 4) + (hash << 7) + (hash << 8) + (hash << 24)
+    hash = applyMix(hash)
   }
   return (hash >>> 0).toString(36)
 }
