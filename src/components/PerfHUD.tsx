@@ -11,7 +11,7 @@ export function PerfHUD() {
   useFrame((state) => {
     if (state.clock.elapsedTime - lastUpdate.current > UPDATE_INTERVAL) {
       lastUpdate.current = state.clock.elapsedTime
-      setInfo({ ...gl.info })
+      setInfo({ ...gl.info, memory: { ...gl.info.memory } })
     }
   })
 
