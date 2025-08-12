@@ -2,7 +2,7 @@ import * as THREE from 'three'
 
 // FNV-1a variant mixing step for hashing
 const fnv1aMix = (h: number): number =>
-  h + (h << 1) + (h << 4) + (h << 7) + (h << 8) + (h << 24)
+  (h + (h << 1) + (h << 4) + (h << 7) + (h << 8) + (h << 24)) | 0
 /**
  * Upgrade any material to MeshStandardMaterial, preserving basic properties
  * and tracking newly created materials for later disposal.
