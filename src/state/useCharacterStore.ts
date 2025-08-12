@@ -63,10 +63,7 @@ export const useCharacterStore = create<State>()(persist((set,get)=> ({
   refreshMorphKeys: (asset) => set(s => {
     const dict = (asset.geometry as THREE.BufferGeometry & { morphTargetsDictionary?: Record<string, number> }).morphTargetsDictionary || {}
     const keys = Object.keys(dict)
-    const weights = keys.reduce<Record<string, number>>((acc, k) => {
-      acc[k] = s.morphWeights[k] ?? 0
-      return acc
-    }, {})
+    const weights = Object.fromEntries(keys.map(k => [k, s.morphWeights[k] ?? 0]))
     return { morphKeys: keys, morphWeights: weights }
   }),
   onFiles: async (kind, files) => {
