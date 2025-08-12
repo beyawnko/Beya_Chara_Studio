@@ -5,9 +5,11 @@ import React, { useState } from 'react'
 export function PerfHUD() {
   const { gl } = useThree()
   const [info, setInfo] = useState(gl.info)
-
-  useFrame((state, delta) => {
-    if (state.clock.elapsedTime % 0.5 < delta) {
+  const UPDATE_INTERVAL = 0.5 // seconds
+  const lastUpdate = React.useRef(0)
+  useFrame((state) => {
+    if (state.clock.elapsedTime - lastUpdate.current > UPDATE_INTERVAL) {
+      lastUpdate.current = state.clock.elapsedTime
       setInfo({ ...gl.info })
     }
   })
