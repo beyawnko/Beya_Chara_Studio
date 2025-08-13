@@ -1,5 +1,5 @@
-import React, { useRef, useState } from 'react'
 import { useFrame, useThree } from '@react-three/fiber'
+import React, { useRef, useState } from 'react'
 
 /** Simple dev-only HUD showing renderer statistics */
 const UPDATE_INTERVAL = 0.5 // seconds

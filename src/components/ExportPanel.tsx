@@ -2,9 +2,9 @@ import React, { useMemo, useState } from 'react'
 import * as THREE from 'three'
 
 import { exportGLB, exportGLBBufferCombined } from '../lib/exportGLB'
+import { getMaterialSlotId } from '../lib/materials'
 import { getMorphMeta } from '../lib/morphs'
 import { useCharacterStore } from '../state/useCharacterStore'
-import { getMaterialSlotId } from '../lib/materials'
 
 export function ExportPanel() {
   const base = useCharacterStore(s => s.base)

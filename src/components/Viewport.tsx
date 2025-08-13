@@ -3,10 +3,10 @@ import { Canvas } from '@react-three/fiber'
 import React, { useEffect } from 'react'
 import * as THREE from 'three'
 
+import { getMaterialSlotId, normalizeMeshMaterials } from '../lib/materials'
 import { useCharacterStore } from '../state/useCharacterStore'
 import { BoneHighlighter } from './BoneHighlighter'
 import { HeadTransformGizmo } from './HeadTransformGizmo'
-import { getMaterialSlotId, normalizeMeshMaterials } from '../lib/materials'
 import { PerfHUD } from './PerfHUD'
 
 export function Viewport() {
