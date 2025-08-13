@@ -1,11 +1,10 @@
+import { VRMLoaderPlugin, VRMUtils } from '@pixiv/three-vrm'
 import * as THREE from 'three'
 import { FBXLoader } from 'three/examples/jsm/loaders/FBXLoader.js'
-import { GLTF,GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js'
+import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js'
 
-import type { LoadedFBX } from '../types'
+import type { AnyAsset, LoadedFBX } from '../types'
 import { extractVRMPresetsFromGLTF } from './vrm'
-
-export type AnyAsset = LoadedFBX & { vrmPresets?: string[] }
 
 export function validateTopology(base: THREE.BufferGeometry, geo: THREE.BufferGeometry) {
   const posA = base.getAttribute('position').count, posB = geo.getAttribute('position').count;
@@ -56,22 +55,28 @@ export async function loadAny(file: File, opts: { asVariantOf?: LoadedFBX } = {}
 
   if (ext === 'glb' || ext === 'gltf' || ext === 'vrm') {
     const loader = new GLTFLoader()
-    const gltf = await new Promise<GLTF>((resolve, reject) => {
-      loader.parse(ab, '/', resolve, reject)
-    })
+    loader.register((parser) => new VRMLoaderPlugin(parser))
+    const gltf = await loader.parseAsync(ab, '/')
+    const vrm = gltf.userData?.vrm
+    if (vrm) VRMUtils.rotateVRM0(vrm)
     const root = gltf.scene
     const sk = firstSkinned(root)
     if (!sk) throw new Error('No SkinnedMesh found in GLTF/VRM')
 
     const { skinned, geo } = sanitizeSkinned(sk)
     const out: AnyAsset = {
-      name, mesh: skinned, geometry: geo, skeleton: skinned.skeleton, bindMatrix: skinned.bindMatrix.clone()
+      name,
+      mesh: skinned,
+      geometry: geo,
+      skeleton: skinned.skeleton,
+      bindMatrix: skinned.bindMatrix.clone(),
+      vrm,
     }
 
     // VRM preset extraction (VRM 0.x "VRM" or 1.0 "VRMC_vrm")
     try {
       const presets = extractVRMPresetsFromGLTF(gltf)
-      if (presets?.length) (out as AnyAsset).vrmPresets = presets
+      if (presets?.length) out.vrmPresets = presets
     } catch {
       // ignore errors, not all GLTFs are VRMs
     }

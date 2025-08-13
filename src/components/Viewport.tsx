@@ -1,6 +1,7 @@
-import { Environment,OrbitControls } from '@react-three/drei'
-import { Canvas } from '@react-three/fiber'
-import { useEffect } from 'react'
+import type { VRM } from '@pixiv/three-vrm'
+import { Environment, OrbitControls } from '@react-three/drei'
+import { Canvas, useFrame } from '@react-three/fiber'
+import { useEffect, useRef } from 'react'
 import * as THREE from 'three'
 
 import { getMaterialSlotId, normalizeMeshMaterials } from '../lib/materials'
@@ -20,6 +21,15 @@ export function Viewport() {
 
   const active = activePart==='head' ? head : activePart==='body' ? body : base
   const mesh = active?.mesh
+  const vrmRef = useRef<VRM | null>(null)
+
+  useEffect(() => {
+    vrmRef.current = active?.vrm ?? null
+  }, [active])
+
+  useFrame((_, delta) => {
+    vrmRef.current?.update(delta)
+  })
 
   useEffect(() => {
     if (!mesh) return
