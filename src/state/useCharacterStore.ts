@@ -87,8 +87,10 @@ export const useCharacterStore = create<State>()(persist((set,get)=> ({
         const key = baseMap[kind as keyof typeof baseMap]
         if (key === 'base') {
           set({ base: asset, morphKeys: [], morphWeights: {}, variants: [], errors: [] })
+        } else if (key === 'head') {
+          set({ head: asset, errors: [] })
         } else {
-          set({ [key]: asset, errors: [] } as unknown as Partial<State>)
+          set({ body: asset, errors: [] })
         }
         return
       }

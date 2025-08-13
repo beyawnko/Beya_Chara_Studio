@@ -52,6 +52,7 @@
 - **UE import preset doc**: checklist for UE morph import flags, tangent space options, and material merging.
 - **Digital Tailor**: garment fitting scaffold added; implement pin UI, cloth solver, and export pipeline.
 - Code review addressed: consolidated FileDrop kind mapping, garment handling moved into `onFiles`, shared error helper, semantic button styles, and refactored `onFiles` to avoid duplication.
+- Follow-up: removed broad type assertion in `onFiles` by explicitly handling head/body base assignments.
 
 ## Deployment
 
