@@ -9,8 +9,11 @@ vi.mock('../src/lib/importers', () => ({
 
 describe('garment import', () => {
   it('stores garment asset', async () => {
+    useCharacterStore.setState({ garment: null, errors: [] })
     const file = new File([''], 'garment.glb')
     await useCharacterStore.getState().onGarmentFiles([file])
-    expect(useCharacterStore.getState().garment?.name).toBe('garment')
+    const state = useCharacterStore.getState()
+    expect(state.garment?.name).toBe('garment')
+    expect(state.errors).toHaveLength(0)
   })
 })

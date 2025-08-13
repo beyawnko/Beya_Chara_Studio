@@ -138,6 +138,7 @@ export const useCharacterStore = create<State>()(persist((set,get)=> ({
     }
   },
   onGarmentFiles: async (files) => {
+    if (!files.length) return
     const pushErr = (msg:string) => set(s => ({ errors: [...s.errors, msg] }))
     try {
       const asset = await loadAny(files[0])

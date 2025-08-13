@@ -36,50 +36,45 @@ export default function App() {
     }
   }, [])
 
-  if (mode === 'tailor') {
-    return (
-      <div className="row">
-        <div className="sidebar">
-          <button className="btn" onClick={() => setMode('character')}>Back to Character Mode</button>
-          <DigitalTailorPanel />
-        </div>
-        <div className="main">
-          <Viewport />
-        </div>
+  const sidebar = mode === 'tailor' ? (
+    <>
+      <button className="btn" onClick={() => setMode('character')}>Back to Character Mode</button>
+      <DigitalTailorPanel />
+    </>
+  ) : (
+    <>
+      <h3>Character Morph Creator (GLB-only)</h3>
+      <button className="btn" onClick={() => setMode('tailor')}>Enter Digital Tailor</button>
+      <PartTabs />
+      <FileDrop kind={activePart==='head' ? 'headBase' : activePart==='body' ? 'bodyBase' : 'base'} />
+      <div style={{height:8}} />
+      <FileDrop kind={activePart==='head' ? 'headVariant' : activePart==='body' ? 'bodyVariant' : 'variant'} />
+
+      <div style={{height:12}} />
+      <div>
+        <div><span className="badge">Active</span>{activePart}</div>
+        <div><span className="badge">Base</span>{base?.name ?? 'none'}</div>
+        <div><span className="badge">Variants</span>{variants.length}</div>
       </div>
-    )
-  }
+
+      <SkeletonBadge />
+      <ConflictPanel />
+
+      <hr />
+      <MaterialSplitPanel />
+      <hr />
+      <RetargetPanel />
+      <BoneMapEditor />
+      <hr />
+      <ExportPanel />
+      <hr />
+      <ARKitPanel />
+    </>
+  )
 
   return (
     <div className="row">
-      <div className="sidebar">
-        <h3>Character Morph Creator (GLB-only)</h3>
-        <button className="btn" onClick={() => setMode('tailor')}>Enter Digital Tailor</button>
-        <PartTabs />
-        <FileDrop kind={activePart==='head' ? 'headBase' : activePart==='body' ? 'bodyBase' : 'base'} />
-        <div style={{height:8}} />
-        <FileDrop kind={activePart==='head' ? 'headVariant' : activePart==='body' ? 'bodyVariant' : 'variant'} />
-
-        <div style={{height:12}} />
-        <div>
-          <div><span className="badge">Active</span>{activePart}</div>
-          <div><span className="badge">Base</span>{base?.name ?? 'none'}</div>
-          <div><span className="badge">Variants</span>{variants.length}</div>
-        </div>
-
-        <SkeletonBadge />
-        <ConflictPanel />
-
-        <hr />
-        <MaterialSplitPanel />
-        <hr />
-        <RetargetPanel />
-        <BoneMapEditor />
-        <hr />
-        <ExportPanel />
-        <hr />
-        <ARKitPanel />
-      </div>
+      <div className="sidebar">{sidebar}</div>
       <div className="main">
         <Viewport />
       </div>
