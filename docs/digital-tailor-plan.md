@@ -8,6 +8,7 @@ This document tracks progress and remaining work for integrating the **Digital T
 - Garment import pipeline wired into `useCharacterStore`.
 - Basic pins/simulation state via `useTailorStore`.
 - Stub cloth solver worker and Playwright smoke test for mode toggle.
+- Addressed initial code review: extracted FileDrop kind helpers, simplified file input logic, and centralized error handling.
 
 ## TODOs
 

@@ -15,7 +15,7 @@ export function FileDrop({ kind }:{ kind:'base'|'variant'|'headBase'|'headVarian
     garment: 'Upload Garment GLB'
   } as const
   const label = labelMap[kind]
-  const multi = kind==='variant' || kind==='headVariant' || kind==='bodyVariant'
+  const multi = kind.endsWith('Variant')
   const getHintText = (k: typeof kind) => {
     if (k === 'garment') return 'Garment must be a skinned mesh.'
     return k.endsWith('Base') ? 'Base first.' : 'Variants must match topology & skin.'
@@ -29,7 +29,7 @@ export function FileDrop({ kind }:{ kind:'base'|'variant'|'headBase'|'headVarian
   return (
     <div className="drop">
       <div>{label}</div>
-      <input type="file" accept=".fbx,.glb,.gltf,.vrm" multiple={multi} onChange={handle} />
+      <input type="file" accept={kind === 'garment' ? '.glb' : '.fbx,.glb,.gltf,.vrm'} multiple={multi} onChange={handle} />
       <small>{getHintText(kind)}</small>
     </div>
   )

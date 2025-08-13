@@ -23,6 +23,19 @@ export default function App() {
   const mode = useTailorStore(s => s.mode)
   const setMode = useTailorStore(s => s.setMode)
 
+  const baseKind =
+    activePart === 'head'
+      ? 'headBase'
+      : activePart === 'body'
+      ? 'bodyBase'
+      : 'base'
+  const variantKind =
+    activePart === 'head'
+      ? 'headVariant'
+      : activePart === 'body'
+      ? 'bodyVariant'
+      : 'variant'
+
   useEffect(() => {
     if (typeof window === 'undefined') return
     const cleanup = () => {
@@ -46,9 +59,9 @@ export default function App() {
       <h3>Character Morph Creator (GLB-only)</h3>
       <button className="btn" onClick={() => setMode('tailor')}>Enter Digital Tailor</button>
       <PartTabs />
-      <FileDrop kind={activePart==='head' ? 'headBase' : activePart==='body' ? 'bodyBase' : 'base'} />
+      <FileDrop kind={baseKind} />
       <div style={{height:8}} />
-      <FileDrop kind={activePart==='head' ? 'headVariant' : activePart==='body' ? 'bodyVariant' : 'variant'} />
+      <FileDrop kind={variantKind} />
 
       <div style={{height:12}} />
       <div>

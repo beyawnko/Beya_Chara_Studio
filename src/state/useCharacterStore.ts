@@ -37,6 +37,10 @@ type State = {
   clearErrors: ()=>void
 }
 
+const pushError = (set:(fn:(s:State)=>State)=>void, msg:string) => {
+  set(s => ({ errors: [...s.errors, msg] }))
+}
+
 export const useCharacterStore = create<State>()(persist((set,get)=> ({
   base: null,
   head: null,
@@ -69,9 +73,8 @@ export const useCharacterStore = create<State>()(persist((set,get)=> ({
     const weights = Object.fromEntries(keys.map(k => [k, s.morphWeights[k] ?? 0]))
     return { morphKeys: keys, morphWeights: weights }
   }),
-  onFiles: async (kind, files) => {
-    const pushErr = (msg:string) => set(s => ({ errors: [...s.errors, msg] }))
-    try {
+    onFiles: async (kind, files) => {
+      try {
       if (kind === 'base') {
         const asset = await loadAny(files[0])
         set({ base: asset, morphKeys: [], morphWeights: {}, variants: [], errors: [] })
@@ -79,7 +82,7 @@ export const useCharacterStore = create<State>()(persist((set,get)=> ({
       }
       if (kind === 'variant') {
         const base = get().base
-        if (!base) { pushErr('Upload base first.'); return }
+          if (!base) { pushError(set, 'Upload base first.'); return }
         for (const f of files) {
           try {
             const v = await loadAny(f, { asVariantOf: base })
@@ -87,7 +90,7 @@ export const useCharacterStore = create<State>()(persist((set,get)=> ({
             set(s => ({ variants: [...s.variants, f.name], morphKeys: [...s.morphKeys, key] }))
           } catch (e: unknown) {
             const msg = e instanceof Error ? e.message : String(e)
-            pushErr(`${f.name}: ${msg}`)
+              pushError(set, `${f.name}: ${msg}`)
           }
         }
         return
@@ -99,7 +102,7 @@ export const useCharacterStore = create<State>()(persist((set,get)=> ({
       }
       if (kind === 'headVariant') {
         const head = get().head
-        if (!head) { pushErr('Upload head base first.'); return }
+          if (!head) { pushError(set, 'Upload head base first.'); return }
         for (const f of files) {
           try {
             const v = await loadAny(f, { asVariantOf: head })
@@ -107,7 +110,7 @@ export const useCharacterStore = create<State>()(persist((set,get)=> ({
             set(s => ({ variants: [...s.variants, f.name], morphKeys: [...s.morphKeys, key] }))
           } catch (e: unknown) {
             const msg = e instanceof Error ? e.message : String(e)
-            pushErr(`${f.name}: ${msg}`)
+              pushError(set, `${f.name}: ${msg}`)
           }
         }
         return
@@ -119,7 +122,7 @@ export const useCharacterStore = create<State>()(persist((set,get)=> ({
       }
       if (kind === 'bodyVariant') {
         const body = get().body
-        if (!body) { pushErr('Upload body base first.'); return }
+          if (!body) { pushError(set, 'Upload body base first.'); return }
         for (const f of files) {
           try {
             const v = await loadAny(f, { asVariantOf: body })
@@ -127,28 +130,27 @@ export const useCharacterStore = create<State>()(persist((set,get)=> ({
             set(s => ({ variants: [...s.variants, f.name], morphKeys: [...s.morphKeys, key] }))
           } catch (e: unknown) {
             const msg = e instanceof Error ? e.message : String(e)
-            pushErr(`${f.name}: ${msg}`)
+              pushError(set, `${f.name}: ${msg}`)
           }
         }
         return
       }
-    } catch (e: unknown) {
-      const msg = e instanceof Error ? e.message : String(e)
-      pushErr(msg)
-    }
-  },
-  onGarmentFiles: async (files) => {
-    if (!files.length) return
-    const pushErr = (msg:string) => set(s => ({ errors: [...s.errors, msg] }))
-    try {
+      } catch (e: unknown) {
+        const msg = e instanceof Error ? e.message : String(e)
+        pushError(set, msg)
+      }
+    },
+    onGarmentFiles: async (files) => {
+      if (!files.length) return
+      try {
       const asset = await loadAny(files[0])
       set({ garment: asset, errors: [] })
-    } catch (e: unknown) {
-      const msg = e instanceof Error ? e.message : String(e)
-      pushErr(msg)
+      } catch (e: unknown) {
+        const msg = e instanceof Error ? e.message : String(e)
+        pushError(set, msg)
+      }
     }
-  }
-}), {
+  }), {
   name:'char-morphs',
   partialize: s => ({ materialAssign: s.materialAssign, boneMap: s.boneMap, headOffset: s.headOffset, morphWeights: s.morphWeights }),
 }))
