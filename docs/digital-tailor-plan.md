@@ -10,7 +10,8 @@ This document tracks progress and remaining work for integrating the **Digital T
 - Stub cloth solver worker and Playwright smoke test for mode toggle.
 - Addressed code review: consolidated kind mapping, routed garment uploads through `onFiles`, replaced global utility styles, and centralized error handling.
 - Refactored `onFiles` in `useCharacterStore` to remove duplicated logic.
- - Removed redundant type assertions in `useCharacterStore` for clearer inference.
+- Removed redundant type assertions in `useCharacterStore` for clearer inference.
+- Simplified head/body assignment in `onFiles` with a computed key to avoid duplication.
 
 ## TODOs
 

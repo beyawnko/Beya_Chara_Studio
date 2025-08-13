@@ -87,10 +87,8 @@ export const useCharacterStore = create<State>()(persist((set,get)=> ({
         const key = baseMap[kind]
         if (key === 'base') {
           set({ base: asset, morphKeys: [], morphWeights: {}, variants: [], errors: [] })
-        } else if (key === 'head') {
-          set({ head: asset, errors: [] })
         } else {
-          set({ body: asset, errors: [] })
+          set({ [key]: asset, errors: [] })
         }
         return
       }
