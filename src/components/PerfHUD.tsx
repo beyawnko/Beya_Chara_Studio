@@ -6,12 +6,14 @@ const UPDATE_INTERVAL = 0.5 // seconds
 
 export function PerfHUD() {
   const { gl } = useThree()
-  const [memoryInfo, setMemoryInfo] = useState(gl.info.memory)
+  const [geometries, setGeometries] = useState(gl.info.memory.geometries)
+  const [textures, setTextures] = useState(gl.info.memory.textures)
   const lastUpdate = useRef(0)
   useFrame((state) => {
     if (state.clock.elapsedTime - lastUpdate.current > UPDATE_INTERVAL) {
       lastUpdate.current = state.clock.elapsedTime
-      setMemoryInfo({ ...gl.info.memory })
+      setGeometries(gl.info.memory.geometries)
+      setTextures(gl.info.memory.textures)
     }
   })
 
@@ -27,8 +29,8 @@ export function PerfHUD() {
         fontSize: 10,
       }}
     >
-      <div>Geometries: {memoryInfo.geometries}</div>
-      <div>Textures: {memoryInfo.textures}</div>
+      <div>Geometries: {geometries}</div>
+      <div>Textures: {textures}</div>
     </div>
   )
 }
