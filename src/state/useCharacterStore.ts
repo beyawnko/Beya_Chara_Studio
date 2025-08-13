@@ -136,5 +136,5 @@ export const useCharacterStore = create<State>()(persist((set,get)=> ({
   }
 }), {
   name:'char-morphs',
-  partialize: s => ({ materialAssign: s.materialAssign, boneMap: s.boneMap, headOffset: s.headOffset }),
+  partialize: s => ({ materialAssign: s.materialAssign, boneMap: s.boneMap, headOffset: s.headOffset, morphWeights: s.morphWeights }),
 }))
