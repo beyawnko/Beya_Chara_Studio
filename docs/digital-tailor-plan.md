@@ -12,6 +12,7 @@ This document tracks progress and remaining work for integrating the **Digital T
 - Refactored `onFiles` in `useCharacterStore` to remove duplicated logic.
 - Removed redundant type assertions in `useCharacterStore` for clearer inference.
 - Simplified head/body assignment in `onFiles` with a computed key to avoid duplication.
+- Corrected `pushError` helper typing to accept partial state updates.
 
 ## TODOs
 

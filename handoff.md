@@ -55,6 +55,7 @@
 - Follow-up: removed broad type assertion in `onFiles` by explicitly handling head/body base assignments.
 - Cleanup: dropped redundant `keyof` assertions in `onFiles` to leverage type guard inference.
 - Cleanup: simplified head/body base setting with a computed key to eliminate duplicated branches.
+- Cleanup: narrowed `pushError` helper to `(s:State)=>Partial<State>` for accurate typing.
 
 ## Deployment
 

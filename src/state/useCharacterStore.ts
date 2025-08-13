@@ -36,7 +36,10 @@ type State = {
   clearErrors: ()=>void
 }
 
-const pushError = (set:(fn:(s:State)=>State)=>void, msg:string) => {
+const pushError = (
+  set: (fn: (s: State) => Partial<State>) => void,
+  msg: string
+) => {
   set(s => ({ errors: [...s.errors, msg] }))
 }
 
