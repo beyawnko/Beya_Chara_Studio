@@ -1,7 +1,7 @@
 import { VRMLoaderPlugin, VRMUtils } from '@pixiv/three-vrm'
 import * as THREE from 'three'
 import { FBXLoader } from 'three/examples/jsm/loaders/FBXLoader.js'
-import { GLTF, GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js'
+import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js'
 
 import type { AnyAsset, LoadedFBX } from '../types'
 import { extractVRMPresetsFromGLTF } from './vrm'
@@ -56,9 +56,7 @@ export async function loadAny(file: File, opts: { asVariantOf?: LoadedFBX } = {}
   if (ext === 'glb' || ext === 'gltf' || ext === 'vrm') {
     const loader = new GLTFLoader()
     loader.register((parser) => new VRMLoaderPlugin(parser))
-    const gltf = await new Promise<GLTF>((resolve, reject) => {
-      loader.parse(ab, '/', resolve, reject)
-    })
+    const gltf = await loader.parseAsync(ab, '/')
     const vrm = gltf.userData?.vrm
     if (vrm) VRMUtils.rotateVRM0(vrm)
     const root = gltf.scene
