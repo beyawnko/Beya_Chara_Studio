@@ -1,10 +1,9 @@
 import { type ChangeEvent, useCallback } from 'react'
 
-import { useCharacterStore } from '../state/useCharacterStore'
+import { useCharacterStore, type Part } from '../state/useCharacterStore'
 
-export function FileDrop({ kind }:{ kind:'base'|'variant'|'headBase'|'headVariant'|'bodyBase'|'bodyVariant'|'garment' }) {
+export function FileDrop({ kind }: { kind: Part }) {
   const onFiles = useCharacterStore(s => s.onFiles)
-  const onGarmentFiles = useCharacterStore(s => s.onGarmentFiles)
   const labelMap = {
     base: 'Upload Base FBX',
     variant: 'Upload Variant FBX',
@@ -22,10 +21,9 @@ export function FileDrop({ kind }:{ kind:'base'|'variant'|'headBase'|'headVarian
   }
   const handle = useCallback((e: ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(e.target.files ?? [])
-    if (kind === 'garment') onGarmentFiles(files)
-    else onFiles(kind, files)
+    onFiles(kind, files)
     e.currentTarget.value = ''
-  }, [kind, onFiles, onGarmentFiles])
+  }, [kind, onFiles])
   return (
     <div className="drop">
       <div>{label}</div>

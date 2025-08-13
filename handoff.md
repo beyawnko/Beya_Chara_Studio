@@ -51,7 +51,7 @@
 - **Performance budgets**: synthetic meshes 200k–500k vertices; worker pool sizing UI.
 - **UE import preset doc**: checklist for UE morph import flags, tangent space options, and material merging.
 - **Digital Tailor**: garment fitting scaffold added; implement pin UI, cloth solver, and export pipeline.
-- Code review addressed: FileDrop constants extracted, file accept clarified, shared error helper.
+- Code review addressed: consolidated FileDrop kind mapping, garment handling moved into `onFiles`, shared error helper, and semantic button styles.
 
 ## Deployment
 

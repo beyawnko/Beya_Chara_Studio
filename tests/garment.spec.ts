@@ -11,7 +11,7 @@ describe('garment import', () => {
   it('stores garment asset', async () => {
     useCharacterStore.setState({ garment: null, errors: [] })
     const file = new File([''], 'garment.glb')
-    await useCharacterStore.getState().onGarmentFiles([file])
+    await useCharacterStore.getState().onFiles('garment', [file])
     const state = useCharacterStore.getState()
     expect(state.garment?.name).toBe('garment')
     expect(state.errors).toHaveLength(0)

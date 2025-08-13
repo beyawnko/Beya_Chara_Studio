@@ -23,18 +23,12 @@ export default function App() {
   const mode = useTailorStore(s => s.mode)
   const setMode = useTailorStore(s => s.setMode)
 
-  const baseKind =
-    activePart === 'head'
-      ? 'headBase'
-      : activePart === 'body'
-      ? 'bodyBase'
-      : 'base'
-  const variantKind =
-    activePart === 'head'
-      ? 'headVariant'
-      : activePart === 'body'
-      ? 'bodyVariant'
-      : 'variant'
+  const kindMap = {
+    base: { base: 'base', variant: 'variant' },
+    head: { base: 'headBase', variant: 'headVariant' },
+    body: { base: 'bodyBase', variant: 'bodyVariant' }
+  } as const
+  const { base: baseKind, variant: variantKind } = kindMap[activePart]
 
   useEffect(() => {
     if (typeof window === 'undefined') return

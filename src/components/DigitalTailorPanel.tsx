@@ -18,7 +18,7 @@ export function DigitalTailorPanel() {
       <button className="btn" disabled={!garment} onClick={() => setSimulating(!isSim)}>
         {isSim ? 'Stop Simulation' : 'Simulate Draping'}
       </button>
-      <button className="btn ml-2" disabled={!garment}>Export Garment</button>
+      <button className="btn tailor-export-btn" disabled={!garment}>Export Garment</button>
     </div>
   )
 }

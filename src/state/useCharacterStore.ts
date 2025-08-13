@@ -6,7 +6,7 @@ import { loadAny } from '../lib/importers'
 import { addVariantAsMorph } from '../lib/morphs'
 import type { AnyAsset } from '../types'
 
-type Part = 'base'|'variant'|'headBase'|'headVariant'|'bodyBase'|'bodyVariant'
+export type Part = 'base'|'variant'|'headBase'|'headVariant'|'bodyBase'|'bodyVariant'|'garment'
 export type ActivePart = 'base'|'head'|'body'
 type Vec3 = { x:number, y:number, z:number }
 
@@ -26,7 +26,6 @@ type State = {
   selSrcBone?: string
   selDstBone?: string
   onFiles: (kind:Part, files: File[]) => Promise<void>
-  onGarmentFiles: (files: File[]) => Promise<void>
   setMorphWeight: (key:string, v:number)=>void
   setActivePart: (p:ActivePart)=>void
   setMaterialAssign: (key:string, v:'head'|'body'|'none')=>void
@@ -73,8 +72,14 @@ export const useCharacterStore = create<State>()(persist((set,get)=> ({
     const weights = Object.fromEntries(keys.map(k => [k, s.morphWeights[k] ?? 0]))
     return { morphKeys: keys, morphWeights: weights }
   }),
-    onFiles: async (kind, files) => {
-      try {
+  onFiles: async (kind, files) => {
+    if (!files.length) return
+    try {
+      if (kind === 'garment') {
+        const asset = await loadAny(files[0])
+        set({ garment: asset, errors: [] })
+        return
+      }
       if (kind === 'base') {
         const asset = await loadAny(files[0])
         set({ base: asset, morphKeys: [], morphWeights: {}, variants: [], errors: [] })
@@ -82,7 +87,7 @@ export const useCharacterStore = create<State>()(persist((set,get)=> ({
       }
       if (kind === 'variant') {
         const base = get().base
-          if (!base) { pushError(set, 'Upload base first.'); return }
+        if (!base) { pushError(set, 'Upload base first.'); return }
         for (const f of files) {
           try {
             const v = await loadAny(f, { asVariantOf: base })
@@ -90,7 +95,7 @@ export const useCharacterStore = create<State>()(persist((set,get)=> ({
             set(s => ({ variants: [...s.variants, f.name], morphKeys: [...s.morphKeys, key] }))
           } catch (e: unknown) {
             const msg = e instanceof Error ? e.message : String(e)
-              pushError(set, `${f.name}: ${msg}`)
+            pushError(set, `${f.name}: ${msg}`)
           }
         }
         return
@@ -102,7 +107,7 @@ export const useCharacterStore = create<State>()(persist((set,get)=> ({
       }
       if (kind === 'headVariant') {
         const head = get().head
-          if (!head) { pushError(set, 'Upload head base first.'); return }
+        if (!head) { pushError(set, 'Upload head base first.'); return }
         for (const f of files) {
           try {
             const v = await loadAny(f, { asVariantOf: head })
@@ -110,7 +115,7 @@ export const useCharacterStore = create<State>()(persist((set,get)=> ({
             set(s => ({ variants: [...s.variants, f.name], morphKeys: [...s.morphKeys, key] }))
           } catch (e: unknown) {
             const msg = e instanceof Error ? e.message : String(e)
-              pushError(set, `${f.name}: ${msg}`)
+            pushError(set, `${f.name}: ${msg}`)
           }
         }
         return
@@ -122,7 +127,7 @@ export const useCharacterStore = create<State>()(persist((set,get)=> ({
       }
       if (kind === 'bodyVariant') {
         const body = get().body
-          if (!body) { pushError(set, 'Upload body base first.'); return }
+        if (!body) { pushError(set, 'Upload body base first.'); return }
         for (const f of files) {
           try {
             const v = await loadAny(f, { asVariantOf: body })
@@ -130,26 +135,15 @@ export const useCharacterStore = create<State>()(persist((set,get)=> ({
             set(s => ({ variants: [...s.variants, f.name], morphKeys: [...s.morphKeys, key] }))
           } catch (e: unknown) {
             const msg = e instanceof Error ? e.message : String(e)
-              pushError(set, `${f.name}: ${msg}`)
+            pushError(set, `${f.name}: ${msg}`)
           }
         }
-        return
       }
-      } catch (e: unknown) {
-        const msg = e instanceof Error ? e.message : String(e)
-        pushError(set, msg)
-      }
-    },
-    onGarmentFiles: async (files) => {
-      if (!files.length) return
-      try {
-      const asset = await loadAny(files[0])
-      set({ garment: asset, errors: [] })
-      } catch (e: unknown) {
-        const msg = e instanceof Error ? e.message : String(e)
-        pushError(set, msg)
-      }
+    } catch (e: unknown) {
+      const msg = e instanceof Error ? e.message : String(e)
+      pushError(set, msg)
     }
+  }
   }), {
   name:'char-morphs',
   partialize: s => ({ materialAssign: s.materialAssign, boneMap: s.boneMap, headOffset: s.headOffset, morphWeights: s.morphWeights }),
