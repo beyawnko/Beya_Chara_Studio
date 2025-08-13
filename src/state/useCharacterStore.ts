@@ -84,7 +84,7 @@ export const useCharacterStore = create<State>()(persist((set,get)=> ({
       }
       if (kind in baseMap) {
         const asset = await loadAny(files[0])
-        const key = baseMap[kind as keyof typeof baseMap]
+        const key = baseMap[kind]
         if (key === 'base') {
           set({ base: asset, morphKeys: [], morphWeights: {}, variants: [], errors: [] })
         } else if (key === 'head') {
@@ -95,7 +95,7 @@ export const useCharacterStore = create<State>()(persist((set,get)=> ({
         return
       }
       if (kind in variantMap) {
-        const parentKey = variantMap[kind as keyof typeof variantMap]
+        const parentKey = variantMap[kind]
         const parent = get()[parentKey]
         if (!parent) {
           const name = parentKey === 'base' ? 'base' : `${parentKey} base`
