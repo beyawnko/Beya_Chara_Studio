@@ -1,4 +1,4 @@
-import React from 'react'
+import { useEffect } from 'react'
 
 import { ARKitPanel } from './components/ARKitPanel'
 import { BoneMapEditor } from './components/BoneMapEditor'
@@ -19,7 +19,7 @@ export default function App() {
   const variants = useCharacterStore(s => s.variants)
   const activePart = useCharacterStore(s => s.activePart)
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (typeof window === 'undefined') return
     const cleanup = () => {
       disposeMorphPool()

@@ -1,8 +1,8 @@
-import React, { useMemo } from 'react'
+import { useMemo } from 'react'
 import * as THREE from 'three'
 
-import { useCharacterStore } from '../state/useCharacterStore'
 import { getMaterialSlotId } from '../lib/materials'
+import { useCharacterStore } from '../state/useCharacterStore'
 
 type Assign = 'head'|'body'|'none'
 
@@ -20,7 +20,6 @@ export function MaterialSplitPanel() {
     if (!mesh) return []
     const m = Array.isArray(mesh.material) ? mesh.material : [mesh.material]
     return m.map((mat: THREE.Material, idx:number) => ({
-      index: idx,
       name: mat?.name || `mat_${idx}`,
       id: getMaterialSlotId(mesh, idx),
     }))
@@ -35,7 +34,7 @@ export function MaterialSplitPanel() {
       <table style={{width:'100%', fontSize:12}}>
         <thead><tr><th align="left">Material</th><th>Head</th><th>Body</th><th>None</th></tr></thead>
         <tbody>
-          {mats.map(({index,name,id}) => {
+          {mats.map(({name,id}) => {
             const key = id
             const val:Assign = assign[key] ?? 'none'
             return (

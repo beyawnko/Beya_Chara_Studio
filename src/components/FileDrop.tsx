@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react'
+import { type ChangeEvent, useCallback } from 'react'
 
 import { useCharacterStore } from '../state/useCharacterStore'
 
@@ -14,7 +14,7 @@ export function FileDrop({ kind }:{ kind:'base'|'variant'|'headBase'|'headVarian
   } as const
   const label = labelMap[kind]
   const multi = kind==='variant' || kind==='headVariant' || kind==='bodyVariant'
-  const handle = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+  const handle = useCallback((e: ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(e.target.files ?? [])
     onFiles(kind, files)
     e.currentTarget.value = ''

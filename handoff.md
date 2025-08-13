@@ -3,6 +3,7 @@
 **Scope:** Web app for assembling morph targets from base + variant character meshes (GLB/FBX/VRM), with head/body separation, VRoid head-to-body retargeting, ARKit morph synthesis, and UE 5.6–ready GLB export.
 
 ## Architecture (high level)
+
 - **UI:** React + Vite. Components under `src/components/` (Viewport, FileDrop, ExportPanel, RetargetPanel, BoneMapEditor, MaterialSplitPanel, ARKitPanel).
 - **3D:** Three.js + @react-three/fiber + drei (OrbitControls, Environment).
 - **State:** Zustand (persisted). Keys: `base`, `head`, `body`, `morphKeys`, `morphWeights`, `materialAssign`, `boneMap`, `headOffset`, `errors`, selections for bone highlighting.
@@ -15,6 +16,7 @@
 - **Export:** UE-friendly GLB with Z-up, ×100 scale; per-part or combined head+body (material masks).
 
 ## Key files
+
 - `src/lib/importers.ts` — unified import path (FBX/GLB/GLTF/VRM)
 - `src/lib/morphs.ts` — workerized diffs, similarity, attach + metadata
 - `src/lib/pool.ts` — Comlink worker pool
@@ -28,15 +30,18 @@
 - `src/components/*` — UI panels and viewport; `Viewport` includes gizmo + bone highlighter
 
 ## Tests (Vitest + Playwright)
+
 - Unit: morph attach, ARKit set, skeleton detection, VRM preset extraction, store persistence, retarget presets, GLB round-trip.
 - E2E: `e2e/smoke.spec.ts` ensures app renders.
 - Run: `pnpm test` (unit), `pnpm test:e2e` (Playwright). CI installs Playwright browsers automatically.
 
 ## Style & lint
+
 - ESLint (TS + React) and Prettier included. Run `pnpm lint`, `pnpm lint:fix`, `pnpm format`.
 - EditorConfig sets LF, 2-space, no trailing spaces in common files.
 
 ## Roadmap & TODOs
+
 - **ARKit synthesis**: expand coverage (jaw sideways, funnels/puckers, cheek squint, nose sneer) with region masks and procedural fields.
 - **Workerize synthesis** for large meshes; throttle UI updates with requestAnimationFrame.
 - **Advanced material split**: automatic Head/Body detection via material names and UV islands.
@@ -47,11 +52,13 @@
 - **UE import preset doc**: checklist for UE morph import flags, tangent space options, and material merging.
 
 ## Deployment
+
 - Local: `pnpm dev` → http://localhost:5173
 - Build: `pnpm build` → dist/
 - CI: GitHub Actions (`.github/workflows/ci.yml`) runs lint + unit + e2e on Node 20 / pnpm 9.
 
 ## Notes for maintainers
+
 - Keep skinned geometry in **local space**—avoid applying world matrices pre-bind.
 - When adding new morph synthesis ops, prefer writing to a fresh `Float32Array` and `attachMorph` with `morphTargetsRelative = true`.
 - Always check topology parity (vertex/index counts) when adding morphs or variants.

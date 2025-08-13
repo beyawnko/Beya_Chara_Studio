@@ -1,4 +1,3 @@
-import React from 'react'
 
 import { getPresetMap, PRESET_MAPS } from '../lib/retargetPresets'
 import { useCharacterStore } from '../state/useCharacterStore'

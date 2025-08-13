@@ -1,6 +1,6 @@
 import { TransformControls } from '@react-three/drei'
 import { useThree } from '@react-three/fiber'
-import React, { useEffect, useRef } from 'react'
+import { type ElementRef, useEffect, useRef } from 'react'
 
 import { useCharacterStore } from '../state/useCharacterStore'
 
@@ -8,7 +8,7 @@ export function HeadTransformGizmo() {
   const head = useCharacterStore(s => s.head)
   const active = useCharacterStore(s => s.activePart)
   const offset = useCharacterStore(s => s.headOffset)
-  const ref = useRef<React.ElementRef<typeof TransformControls>>(null)
+  const ref = useRef<ElementRef<typeof TransformControls>>(null)
   useThree()
 
   useEffect(() => {

@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react'
+import { useMemo, useState } from 'react'
 import * as THREE from 'three'
 
 import { alignHeadToBodyNeck, rebindHeadToBody,suggestBoneMap } from '../lib/retarget'

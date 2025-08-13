@@ -1,6 +1,6 @@
+import * as THREE from 'three'
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
-import * as THREE from 'three'
 
 import { loadAny } from '../lib/importers'
 import { addVariantAsMorph } from '../lib/morphs'

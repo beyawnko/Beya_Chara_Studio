@@ -6,5 +6,5 @@ const base = process.env.GITHUB_PAGES_BASE || '/'
 
 export default defineConfig({
   plugins: [react()],
-  base
+  base,
 })
