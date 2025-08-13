@@ -10,7 +10,7 @@ import globals from 'globals'
 
 export default [
   {
-    ignores: ['dist', 'node_modules', 'e2e/*.spec.ts', 'eslint.config.js'],
+    ignores: ['dist', 'node_modules', 'eslint.config.js'],
   },
   {
     files: ['**/*.{ts,tsx,js,jsx}'],
@@ -43,6 +43,7 @@ export default [
       ...tsPlugin.configs.recommended.rules,
       ...reactPlugin.configs.recommended.rules,
       ...reactPlugin.configs['jsx-runtime'].rules,
+      ...reactHooks.configs.recommended.rules,
       'react-refresh/only-export-components': 'off',
       'react/prop-types': 'off',
       // Disabled because it produces false positives for props on @react-three/fiber components.
