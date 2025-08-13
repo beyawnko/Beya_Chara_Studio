@@ -1,5 +1,4 @@
-import type { LoadedFBX } from '../types'
-import type { AnyAsset } from './importers'
+import type { AnyAsset, LoadedFBX } from '../types'
 import { loadAny } from './importers'
 
 type Opts = { asVariantOf?: LoadedFBX }
