@@ -3,6 +3,7 @@ import { useEffect } from 'react'
 import { ARKitPanel } from './components/ARKitPanel'
 import { BoneMapEditor } from './components/BoneMapEditor'
 import { ConflictPanel } from './components/ConflictPanel'
+import { DigitalTailorPanel } from './components/DigitalTailorPanel'
 import { ExportPanel } from './components/ExportPanel'
 import { FileDrop } from './components/FileDrop'
 import { MaterialSplitPanel } from './components/MaterialSplitPanel'
@@ -13,11 +14,14 @@ import { Viewport } from './components/Viewport'
 import { disposeMorphPool } from './lib/morphs'
 import { disposeRetargetPool } from './lib/retarget'
 import { useCharacterStore } from './state/useCharacterStore'
+import { useTailorStore } from './state/useTailorStore'
 
 export default function App() {
   const base = useCharacterStore(s => s.base)
   const variants = useCharacterStore(s => s.variants)
   const activePart = useCharacterStore(s => s.activePart)
+  const mode = useTailorStore(s => s.mode)
+  const setMode = useTailorStore(s => s.setMode)
 
   useEffect(() => {
     if (typeof window === 'undefined') return
@@ -32,10 +36,25 @@ export default function App() {
     }
   }, [])
 
+  if (mode === 'tailor') {
+    return (
+      <div className="row">
+        <div className="sidebar">
+          <button className="btn" onClick={() => setMode('character')}>Back to Character Mode</button>
+          <DigitalTailorPanel />
+        </div>
+        <div className="main">
+          <Viewport />
+        </div>
+      </div>
+    )
+  }
+
   return (
     <div className="row">
       <div className="sidebar">
         <h3>Character Morph Creator (GLB-only)</h3>
+        <button className="btn" onClick={() => setMode('tailor')}>Enter Digital Tailor</button>
         <PartTabs />
         <FileDrop kind={activePart==='head' ? 'headBase' : activePart==='body' ? 'bodyBase' : 'base'} />
         <div style={{height:8}} />

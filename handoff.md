@@ -50,6 +50,7 @@
 - **Save/Load mappings** to JSON; preset library per target skeleton.
 - **Performance budgets**: synthetic meshes 200k–500k vertices; worker pool sizing UI.
 - **UE import preset doc**: checklist for UE morph import flags, tangent space options, and material merging.
+- **Digital Tailor**: garment fitting scaffold added; implement pin UI, cloth solver, and export pipeline.
 
 ## Deployment
 

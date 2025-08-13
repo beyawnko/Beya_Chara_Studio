@@ -14,6 +14,7 @@ type State = {
   base: AnyAsset | null
   head: AnyAsset | null
   body: AnyAsset | null
+  garment: AnyAsset | null
   activePart: ActivePart
   errors: string[]
   variants: string[]
@@ -25,6 +26,7 @@ type State = {
   selSrcBone?: string
   selDstBone?: string
   onFiles: (kind:Part, files: File[]) => Promise<void>
+  onGarmentFiles: (files: File[]) => Promise<void>
   setMorphWeight: (key:string, v:number)=>void
   setActivePart: (p:ActivePart)=>void
   setMaterialAssign: (key:string, v:'head'|'body'|'none')=>void
@@ -39,6 +41,7 @@ export const useCharacterStore = create<State>()(persist((set,get)=> ({
   base: null,
   head: null,
   body: null,
+  garment: null,
   activePart: 'base',
   errors: [],
   variants: [],
@@ -129,6 +132,16 @@ export const useCharacterStore = create<State>()(persist((set,get)=> ({
         }
         return
       }
+    } catch (e: unknown) {
+      const msg = e instanceof Error ? e.message : String(e)
+      pushErr(msg)
+    }
+  },
+  onGarmentFiles: async (files) => {
+    const pushErr = (msg:string) => set(s => ({ errors: [...s.errors, msg] }))
+    try {
+      const asset = await loadAny(files[0])
+      set({ garment: asset, errors: [] })
     } catch (e: unknown) {
       const msg = e instanceof Error ? e.message : String(e)
       pushErr(msg)
