@@ -74,64 +74,36 @@ export const useCharacterStore = create<State>()(persist((set,get)=> ({
   }),
   onFiles: async (kind, files) => {
     if (!files.length) return
+    const baseMap = { base: 'base', headBase: 'head', bodyBase: 'body' } as const
+    const variantMap = { variant: 'base', headVariant: 'head', bodyVariant: 'body' } as const
     try {
       if (kind === 'garment') {
         const asset = await loadAny(files[0])
         set({ garment: asset, errors: [] })
         return
       }
-      if (kind === 'base') {
+      if (kind in baseMap) {
         const asset = await loadAny(files[0])
-        set({ base: asset, morphKeys: [], morphWeights: {}, variants: [], errors: [] })
-        return
-      }
-      if (kind === 'variant') {
-        const base = get().base
-        if (!base) { pushError(set, 'Upload base first.'); return }
-        for (const f of files) {
-          try {
-            const v = await loadAny(f, { asVariantOf: base })
-            const key = await addVariantAsMorph(base, v)
-            set(s => ({ variants: [...s.variants, f.name], morphKeys: [...s.morphKeys, key] }))
-          } catch (e: unknown) {
-            const msg = e instanceof Error ? e.message : String(e)
-            pushError(set, `${f.name}: ${msg}`)
-          }
+        const key = baseMap[kind as keyof typeof baseMap]
+        if (key === 'base') {
+          set({ base: asset, morphKeys: [], morphWeights: {}, variants: [], errors: [] })
+        } else {
+          set({ [key]: asset, errors: [] } as unknown as Partial<State>)
         }
         return
       }
-      if (kind === 'headBase') {
-        const asset = await loadAny(files[0])
-        set({ head: asset, errors: [] })
-        return
-      }
-      if (kind === 'headVariant') {
-        const head = get().head
-        if (!head) { pushError(set, 'Upload head base first.'); return }
-        for (const f of files) {
-          try {
-            const v = await loadAny(f, { asVariantOf: head })
-            const key = await addVariantAsMorph(head, v)
-            set(s => ({ variants: [...s.variants, f.name], morphKeys: [...s.morphKeys, key] }))
-          } catch (e: unknown) {
-            const msg = e instanceof Error ? e.message : String(e)
-            pushError(set, `${f.name}: ${msg}`)
-          }
+      if (kind in variantMap) {
+        const parentKey = variantMap[kind as keyof typeof variantMap]
+        const parent = get()[parentKey]
+        if (!parent) {
+          const name = parentKey === 'base' ? 'base' : `${parentKey} base`
+          pushError(set, `Upload ${name} first.`)
+          return
         }
-        return
-      }
-      if (kind === 'bodyBase') {
-        const asset = await loadAny(files[0])
-        set({ body: asset, errors: [] })
-        return
-      }
-      if (kind === 'bodyVariant') {
-        const body = get().body
-        if (!body) { pushError(set, 'Upload body base first.'); return }
         for (const f of files) {
           try {
-            const v = await loadAny(f, { asVariantOf: body })
-            const key = await addVariantAsMorph(body, v)
+            const v = await loadAny(f, { asVariantOf: parent })
+            const key = await addVariantAsMorph(parent, v)
             set(s => ({ variants: [...s.variants, f.name], morphKeys: [...s.morphKeys, key] }))
           } catch (e: unknown) {
             const msg = e instanceof Error ? e.message : String(e)

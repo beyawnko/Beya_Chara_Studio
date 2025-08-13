@@ -9,6 +9,7 @@ This document tracks progress and remaining work for integrating the **Digital T
 - Basic pins/simulation state via `useTailorStore`.
 - Stub cloth solver worker and Playwright smoke test for mode toggle.
 - Addressed code review: consolidated kind mapping, routed garment uploads through `onFiles`, replaced global utility styles, and centralized error handling.
+- Refactored `onFiles` in `useCharacterStore` to remove duplicated logic.
 
 ## TODOs
 
