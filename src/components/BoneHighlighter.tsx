@@ -1,5 +1,5 @@
 import { useFrame } from '@react-three/fiber'
-import React, { useMemo } from 'react'
+import { useMemo } from 'react'
 import * as THREE from 'three'
 
 import { useCharacterStore } from '../state/useCharacterStore'

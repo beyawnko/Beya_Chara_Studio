@@ -42,6 +42,7 @@ export default [
       ...js.configs.recommended.rules,
       ...tsPlugin.configs.recommended.rules,
       ...reactPlugin.configs.recommended.rules,
+      ...reactPlugin.configs['jsx-runtime'].rules,
       'react-refresh/only-export-components': 'off',
       'react/prop-types': 'off',
       // Disabled because it produces false positives for props on @react-three/fiber components.

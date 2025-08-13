@@ -8,5 +8,5 @@ export default defineConfig({
     port: 5173,
     reuseExistingServer: !process.env.CI,
   },
-  use: { headless: true }
+  use: { headless: true },
 })

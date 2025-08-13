@@ -1,6 +1,6 @@
 import { Environment,OrbitControls } from '@react-three/drei'
 import { Canvas } from '@react-three/fiber'
-import React, { useEffect } from 'react'
+import { useEffect } from 'react'
 import * as THREE from 'three'
 
 import { getMaterialSlotId, normalizeMeshMaterials } from '../lib/materials'
