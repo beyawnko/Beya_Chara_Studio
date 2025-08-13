@@ -41,13 +41,7 @@ export function ARKitPanel() {
           <div style={{marginTop:8}}>
             <button className="btn" onClick={()=>{
               synthesizeARKitMorphs(asset!)
-              // refresh keys by poking store (rudimentary)
-              const s = useCharacterStore.getState()
-              const dict = (asset!.geometry as THREE.BufferGeometry & { morphTargetsDictionary: { [key: string]: number } }).morphTargetsDictionary || {}
-              const keys = Object.keys(dict)
-              s.morphKeys = keys
-              s.morphWeights = Object.fromEntries(keys.map(k=>[k, s.morphWeights[k] ?? 0]))
-              useCharacterStore.setState({ morphKeys: keys, morphWeights: s.morphWeights })
+              useCharacterStore.getState().refreshMorphKeys(asset!)
             }}>Generate ARKit Morph Targets (procedural subset)</button>
           </div>
 

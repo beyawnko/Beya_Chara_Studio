@@ -4,6 +4,7 @@ import * as THREE from 'three'
 import { exportGLB, exportGLBBufferCombined } from '../lib/exportGLB'
 import { getMorphMeta } from '../lib/morphs'
 import { useCharacterStore } from '../state/useCharacterStore'
+import { getMaterialSlotId } from '../lib/materials'
 
 export function ExportPanel() {
   const base = useCharacterStore(s => s.base)
@@ -20,7 +21,7 @@ export function ExportPanel() {
     const matArr = Array.isArray(asset.mesh.material) ? asset.mesh.material : [asset.mesh.material]
     const allow = new Set<number>()
     matArr.forEach((m: THREE.Material, i:number) => {
-      const key = `${m?.name || 'mat'}#${i}`
+      const key = getMaterialSlotId(asset.mesh, i)
       const val = assign[key] || 'none'
       if (active==='head' && val==='head') allow.add(i)
       if (active==='body' && val==='body') allow.add(i)
@@ -35,7 +36,7 @@ export function ExportPanel() {
     if (head?.mesh) {
       const arr = Array.isArray(head.mesh.material) ? head.mesh.material : [head.mesh.material]
       arr.forEach((m: THREE.Material,i:number)=>{
-        const key = `${m?.name || 'mat'}#${i}`
+        const key = getMaterialSlotId(head.mesh, i)
         const val = assign[key] || 'none'
         if (val==='head') headAllow.add(i)
       })
@@ -43,7 +44,7 @@ export function ExportPanel() {
     if (body?.mesh) {
       const arr = Array.isArray(body.mesh.material) ? body.mesh.material : [body.mesh.material]
       arr.forEach((m: THREE.Material,i:number)=>{
-        const key = `${m?.name || 'mat'}#${i}`
+        const key = getMaterialSlotId(body.mesh, i)
         const val = assign[key] || 'none'
         if (val==='body') bodyAllow.add(i)
       })

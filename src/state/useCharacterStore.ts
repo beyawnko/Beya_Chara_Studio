@@ -1,5 +1,6 @@
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
+import * as THREE from 'three'
 
 import { loadAny } from '../lib/importers'
 import { addVariantAsMorph } from '../lib/morphs'
@@ -30,6 +31,7 @@ type State = {
   setBoneMap: (src:string, dst:string)=>void
   setHeadOffset: (o: Partial<{ position: Vec3, rotation: Vec3, scale: number }>)=>void
   setSelectedBones: (src?:string, dst?:string)=>void
+  refreshMorphKeys: (asset: AnyAsset)=>void
   clearErrors: ()=>void
 }
 
@@ -58,6 +60,12 @@ export const useCharacterStore = create<State>()(persist((set,get)=> ({
     scale: o.scale ?? s.headOffset.scale
   }})),
   setSelectedBones: (src, dst) => set({ selSrcBone: src, selDstBone: dst }),
+  refreshMorphKeys: (asset) => set(s => {
+    const dict = (asset.geometry as THREE.BufferGeometry & { morphTargetsDictionary?: Record<string, number> }).morphTargetsDictionary || {}
+    const keys = Object.keys(dict)
+    const weights = Object.fromEntries(keys.map(k => [k, s.morphWeights[k] ?? 0]))
+    return { morphKeys: keys, morphWeights: weights }
+  }),
   onFiles: async (kind, files) => {
     const pushErr = (msg:string) => set(s => ({ errors: [...s.errors, msg] }))
     try {
@@ -126,4 +134,7 @@ export const useCharacterStore = create<State>()(persist((set,get)=> ({
       pushErr(msg)
     }
   }
-}), { name:'char-morphs' }))
+}), {
+  name:'char-morphs',
+  partialize: s => ({ materialAssign: s.materialAssign, boneMap: s.boneMap, headOffset: s.headOffset, morphWeights: s.morphWeights }),
+}))
