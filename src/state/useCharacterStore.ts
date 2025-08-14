@@ -15,6 +15,7 @@ type State = {
   head: AnyAsset | null
   body: AnyAsset | null
   garment: AnyAsset | null
+  isLoading: boolean
   activePart: ActivePart
   errors: string[]
   variants: string[]
@@ -48,6 +49,7 @@ export const useCharacterStore = create<State>()(persist((set,get)=> ({
   head: null,
   body: null,
   garment: null,
+  isLoading: false,
   activePart: 'base',
   errors: [],
   variants: [],
@@ -77,21 +79,22 @@ export const useCharacterStore = create<State>()(persist((set,get)=> ({
   }),
   onFiles: async (kind, files) => {
     if (!files.length) return
+    set({ isLoading: true, errors: [] })
     const baseMap = { base: 'base', headBase: 'head', bodyBase: 'body' } as const
     const variantMap = { variant: 'base', headVariant: 'head', bodyVariant: 'body' } as const
     try {
       if (kind === 'garment') {
         const asset = await loadAny(files[0])
-        set({ garment: asset, errors: [] })
+        set({ garment: asset })
         return
       }
       if (kind in baseMap) {
         const asset = await loadAny(files[0])
         const key = baseMap[kind]
         if (key === 'base') {
-          set({ base: asset, morphKeys: [], morphWeights: {}, variants: [], errors: [] })
+          set({ base: asset, morphKeys: [], morphWeights: {}, variants: [] })
         } else {
-          set({ [key]: asset, errors: [], variants: [], morphKeys: [], morphWeights: {} })
+          set({ [key]: asset, variants: [], morphKeys: [], morphWeights: {} })
         }
         return
       }
@@ -117,6 +120,8 @@ export const useCharacterStore = create<State>()(persist((set,get)=> ({
     } catch (e: unknown) {
       const msg = e instanceof Error ? e.message : String(e)
       pushError(set, msg)
+    } finally {
+      set({ isLoading: false })
     }
   }
   }), {
