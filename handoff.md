@@ -50,6 +50,20 @@
 - **Save/Load mappings** to JSON; preset library per target skeleton.
 - **Performance budgets**: synthetic meshes 200k–500k vertices; worker pool sizing UI.
 - **UE import preset doc**: checklist for UE morph import flags, tangent space options, and material merging.
+- **Digital Tailor**: garment fitting scaffold added; implement pin UI, cloth solver, and export pipeline.
+- Code review addressed: consolidated FileDrop kind mapping, garment handling moved into `onFiles`, shared error helper, semantic button styles, and refactored `onFiles` to avoid duplication.
+- Follow-up: removed broad type assertion in `onFiles` by explicitly handling head/body base assignments.
+- Cleanup: dropped redundant `keyof` assertions in `onFiles` to leverage type guard inference.
+- Cleanup: simplified head/body base setting with a computed key to eliminate duplicated branches.
+- Cleanup: narrowed `pushError` helper to `(s:State)=>Partial<State>` for accurate typing.
+- Bugfix: reset variants and morph state when loading new head or body bases to avoid stale UI.
+- UI cleanup: swapped inline spacing divs for `.spacer-*` classes.
+- UX: added `isLoading` flag and guard to file imports to avoid overlapping uploads.
+- Garment import resets tailor pins and simulation state to prevent stale data.
+- Perf: hoisted static maps (kind/label/base) to module scope to avoid per-render allocation.
+- Perf: moved FileDrop hint helper out of component to avoid per-render recreation.
+- UI: extracted character and tailor sidebars into dedicated components.
+- State: garment changes trigger tailor resets via store subscription rather than direct calls.
 
 ## Deployment
 
