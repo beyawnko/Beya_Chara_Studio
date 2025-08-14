@@ -16,6 +16,7 @@ This document tracks progress and remaining work for integrating the **Digital T
 - Reset variant-related state when loading new head or body bases to avoid stale morphs.
 - Replaced inline spacing divs with semantic CSS classes.
 - Added `isLoading` flag to `useCharacterStore` to block concurrent file imports.
+- Clearing tailor pins and simulation state when importing a new garment.
 
 ## TODOs
 
