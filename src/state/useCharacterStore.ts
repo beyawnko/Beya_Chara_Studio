@@ -91,7 +91,7 @@ export const useCharacterStore = create<State>()(persist((set,get)=> ({
         if (key === 'base') {
           set({ base: asset, morphKeys: [], morphWeights: {}, variants: [], errors: [] })
         } else {
-          set({ [key]: asset, errors: [] })
+          set({ [key]: asset, errors: [], variants: [], morphKeys: [], morphWeights: {} })
         }
         return
       }

@@ -54,10 +54,10 @@ export default function App() {
       <button className="btn" onClick={() => setMode('tailor')}>Enter Digital Tailor</button>
       <PartTabs />
       <FileDrop kind={baseKind} />
-      <div style={{height:8}} />
+      <div className="spacer-sm" />
       <FileDrop kind={variantKind} />
 
-      <div style={{height:12}} />
+      <div className="spacer-md" />
       <div>
         <div><span className="badge">Active</span>{activePart}</div>
         <div><span className="badge">Base</span>{base?.name ?? 'none'}</div>

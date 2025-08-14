@@ -13,6 +13,8 @@ This document tracks progress and remaining work for integrating the **Digital T
 - Removed redundant type assertions in `useCharacterStore` for clearer inference.
 - Simplified head/body assignment in `onFiles` with a computed key to avoid duplication.
 - Corrected `pushError` helper typing to accept partial state updates.
+- Reset variant-related state when loading new head or body bases to avoid stale morphs.
+- Replaced inline spacing divs with semantic CSS classes.
 
 ## TODOs
 
