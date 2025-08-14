@@ -60,6 +60,7 @@
 - UI cleanup: swapped inline spacing divs for `.spacer-*` classes.
 - UX: added `isLoading` flag and guard to file imports to avoid overlapping uploads.
 - Garment import resets tailor pins and simulation state to prevent stale data.
+- Perf: hoisted static maps (kind/label/base) to module scope to avoid per-render allocation.
 
 ## Deployment
 

@@ -45,6 +45,9 @@ const pushError = (
   set(s => ({ errors: [...s.errors, msg] }))
 }
 
+const baseMap = { base: 'base', headBase: 'head', bodyBase: 'body' } as const
+const variantMap = { variant: 'base', headVariant: 'head', bodyVariant: 'body' } as const
+
 export const useCharacterStore = create<State>()(persist((set,get)=> ({
   base: null,
   head: null,
@@ -82,8 +85,6 @@ export const useCharacterStore = create<State>()(persist((set,get)=> ({
     if (get().isLoading) return
     if (!files.length) return
     set({ isLoading: true, errors: [] })
-    const baseMap = { base: 'base', headBase: 'head', bodyBase: 'body' } as const
-    const variantMap = { variant: 'base', headVariant: 'head', bodyVariant: 'body' } as const
     try {
       if (kind === 'garment') {
         const asset = await loadAny(files[0])

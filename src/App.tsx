@@ -16,6 +16,12 @@ import { disposeRetargetPool } from './lib/retarget'
 import { useCharacterStore } from './state/useCharacterStore'
 import { useTailorStore } from './state/useTailorStore'
 
+const kindMap = {
+  base: { base: 'base', variant: 'variant' },
+  head: { base: 'headBase', variant: 'headVariant' },
+  body: { base: 'bodyBase', variant: 'bodyVariant' }
+} as const
+
 export default function App() {
   const base = useCharacterStore(s => s.base)
   const variants = useCharacterStore(s => s.variants)
@@ -23,11 +29,6 @@ export default function App() {
   const mode = useTailorStore(s => s.mode)
   const setMode = useTailorStore(s => s.setMode)
 
-  const kindMap = {
-    base: { base: 'base', variant: 'variant' },
-    head: { base: 'headBase', variant: 'headVariant' },
-    body: { base: 'bodyBase', variant: 'bodyVariant' }
-  } as const
   const { base: baseKind, variant: variantKind } = kindMap[activePart]
 
   useEffect(() => {

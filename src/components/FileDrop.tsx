@@ -1,18 +1,19 @@
 import { type ChangeEvent, useCallback } from 'react'
 
-import { useCharacterStore, type Part } from '../state/useCharacterStore'
+import { type Part, useCharacterStore } from '../state/useCharacterStore'
+
+const labelMap = {
+  base: 'Upload Base FBX',
+  variant: 'Upload Variant FBX',
+  headBase: 'Upload Head Base FBX',
+  headVariant: 'Upload Head Variant FBX',
+  bodyBase: 'Upload Body Base FBX',
+  bodyVariant: 'Upload Body Variant FBX',
+  garment: 'Upload Garment GLB'
+} as const
 
 export function FileDrop({ kind }: { kind: Part }) {
   const onFiles = useCharacterStore(s => s.onFiles)
-  const labelMap = {
-    base: 'Upload Base FBX',
-    variant: 'Upload Variant FBX',
-    headBase: 'Upload Head Base FBX',
-    headVariant: 'Upload Head Variant FBX',
-    bodyBase: 'Upload Body Base FBX',
-    bodyVariant: 'Upload Body Variant FBX',
-    garment: 'Upload Garment GLB'
-  } as const
   const label = labelMap[kind]
   const multi = kind.endsWith('Variant')
   const getHintText = (k: typeof kind) => {
