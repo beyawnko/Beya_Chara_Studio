@@ -79,6 +79,7 @@ export const useCharacterStore = create<State>()(persist((set,get)=> ({
     return { morphKeys: keys, morphWeights: weights }
   }),
   onFiles: async (kind, files) => {
+    if (get().isLoading) return
     if (!files.length) return
     set({ isLoading: true, errors: [] })
     const baseMap = { base: 'base', headBase: 'head', bodyBase: 'body' } as const

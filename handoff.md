@@ -58,7 +58,7 @@
 - Cleanup: narrowed `pushError` helper to `(s:State)=>Partial<State>` for accurate typing.
 - Bugfix: reset variants and morph state when loading new head or body bases to avoid stale UI.
 - UI cleanup: swapped inline spacing divs for `.spacer-*` classes.
-- UX: added `isLoading` flag to file imports to avoid overlapping uploads.
+- UX: added `isLoading` flag and guard to file imports to avoid overlapping uploads.
 - Garment import resets tailor pins and simulation state to prevent stale data.
 
 ## Deployment

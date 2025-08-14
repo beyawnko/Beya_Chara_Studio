@@ -8,6 +8,7 @@ let resolveLoad: (asset: AnyAsset) => void
 vi.mock('../src/lib/importers', () => ({
   loadAny: vi.fn(() => new Promise<AnyAsset>(r => { resolveLoad = r }))
 }))
+import { loadAny } from '../src/lib/importers'
 
 describe('garment import', () => {
   it('stores garment asset', async () => {
@@ -25,5 +26,13 @@ describe('garment import', () => {
     const tState = useTailorStore.getState()
     expect(tState.pins).toHaveLength(0)
     expect(tState.isSimulating).toBe(false)
+  })
+
+  it('ignores uploads while loading', async () => {
+    useCharacterStore.setState({ isLoading: true, garment: null, errors: [] })
+    vi.clearAllMocks()
+    await useCharacterStore.getState().onFiles('garment', [new File([''], 'g.glb')])
+    expect(loadAny).not.toHaveBeenCalled()
+    expect(useCharacterStore.getState().garment).toBeNull()
   })
 })
