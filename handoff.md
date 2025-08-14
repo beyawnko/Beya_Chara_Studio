@@ -61,6 +61,7 @@
 - UX: added `isLoading` flag and guard to file imports to avoid overlapping uploads.
 - Garment import resets tailor pins and simulation state to prevent stale data.
 - Perf: hoisted static maps (kind/label/base) to module scope to avoid per-render allocation.
+- Perf: moved FileDrop hint helper out of component to avoid per-render recreation.
 - UI: extracted character and tailor sidebars into dedicated components.
 - State: garment changes trigger tailor resets via store subscription rather than direct calls.
 

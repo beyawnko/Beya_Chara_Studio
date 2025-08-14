@@ -12,14 +12,15 @@ const labelMap = {
   garment: 'Upload Garment GLB'
 } as const
 
+const getHintText = (k: Part) => {
+  if (k === 'garment') return 'Garment must be a skinned mesh.'
+  return k.endsWith('Base') ? 'Base first.' : 'Variants must match topology & skin.'
+}
+
 export function FileDrop({ kind }: { kind: Part }) {
   const onFiles = useCharacterStore(s => s.onFiles)
   const label = labelMap[kind]
   const multi = kind.endsWith('Variant')
-  const getHintText = (k: typeof kind) => {
-    if (k === 'garment') return 'Garment must be a skinned mesh.'
-    return k.endsWith('Base') ? 'Base first.' : 'Variants must match topology & skin.'
-  }
   const handle = useCallback((e: ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(e.target.files ?? [])
     onFiles(kind, files)
