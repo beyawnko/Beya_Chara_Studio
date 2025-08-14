@@ -1,5 +1,6 @@
-import { describe, expect, it, vi } from 'vitest'
+import { beforeAll, describe, expect, it, vi } from 'vitest'
 
+import { initGarmentSubscriber } from '../src/state/subscriptions'
 import { useCharacterStore } from '../src/state/useCharacterStore'
 import { useTailorStore } from '../src/state/useTailorStore'
 import type { AnyAsset } from '../src/types'
@@ -11,6 +12,9 @@ vi.mock('../src/lib/importers', () => ({
 import { loadAny } from '../src/lib/importers'
 
 describe('garment import', () => {
+  beforeAll(() => {
+    initGarmentSubscriber()
+  })
   it('stores garment asset', async () => {
     useCharacterStore.setState({ garment: null, errors: [], isLoading: false })
     useTailorStore.setState({ pins: [{ vertex: 1, type: 'fixed', target: [0,0,0] }], isSimulating: true })

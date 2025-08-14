@@ -5,7 +5,6 @@ import { persist } from 'zustand/middleware'
 import { loadAny } from '../lib/importers'
 import { addVariantAsMorph } from '../lib/morphs'
 import type { AnyAsset } from '../types'
-import { useTailorStore } from './useTailorStore'
 
 export type Part = 'base'|'variant'|'headBase'|'headVariant'|'bodyBase'|'bodyVariant'|'garment'
 export type ActivePart = 'base'|'head'|'body'
@@ -89,8 +88,6 @@ export const useCharacterStore = create<State>()(persist((set,get)=> ({
       if (kind === 'garment') {
         const asset = await loadAny(files[0])
         set({ garment: asset })
-        useTailorStore.getState().clearPins()
-        useTailorStore.getState().setSimulating(false)
         return
       }
       if (kind in baseMap) {

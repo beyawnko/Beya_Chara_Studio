@@ -18,6 +18,8 @@ This document tracks progress and remaining work for integrating the **Digital T
 - Added `isLoading` flag and guard in `useCharacterStore` to block concurrent file imports.
 - Clearing tailor pins and simulation state when importing a new garment.
 - Hoisted static kind/label/base maps to module scope for minor render-time savings.
+- Sidebar split into `CharacterModeSidebar` and `TailorModeSidebar` for clearer layout.
+- Tailor store now resets via garment-state subscriber instead of direct calls.
 
 ## TODOs
 
