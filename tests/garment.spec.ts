@@ -27,18 +27,14 @@ describe('garment import', () => {
     expect(state.isLoading).toBe(false)
     expect(state.garment?.name).toBe('garment')
     expect(state.errors).toHaveLength(0)
-    const tState = useTailorStore.getState()
-    expect(tState.pins).toHaveLength(0)
-    expect(tState.isSimulating).toBe(false)
+    expect(useTailorStore.getState()).toMatchObject({ pins: [], isSimulating: false })
   })
 
   it('clears tailor state when garment removed', () => {
     useCharacterStore.setState({ garment: { name: 'g', geometry: {} } as AnyAsset })
     useTailorStore.setState({ pins: [{ vertex: 1, type: 'fixed', target: [0,0,0] }], isSimulating: true })
     useCharacterStore.setState({ garment: null })
-    const tState = useTailorStore.getState()
-    expect(tState.pins).toHaveLength(0)
-    expect(tState.isSimulating).toBe(false)
+    expect(useTailorStore.getState()).toMatchObject({ pins: [], isSimulating: false })
   })
 
   it('ignores uploads while loading', async () => {
