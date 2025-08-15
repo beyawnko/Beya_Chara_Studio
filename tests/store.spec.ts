@@ -3,7 +3,7 @@ import { describe, expect, it } from 'vitest'
 
 import { getMaterialSlotId } from '../src/lib/materials'
 import { useCharacterStore } from '../src/state/useCharacterStore'
-import type { AnyAsset } from '../src/types'
+import { mockAsset } from './helpers'
 
 describe('character store', () => {
   it('sets material assignment entries', () => {
@@ -21,8 +21,7 @@ describe('character store', () => {
       morphTargetsDictionary?: Record<string, number>
     }
     geom.morphTargetsDictionary = { A: 0, B: 1 }
-    const asset: AnyAsset = { geometry: geom } as unknown as AnyAsset
-    useCharacterStore.getState().refreshMorphKeys(asset)
+    useCharacterStore.getState().refreshMorphKeys(mockAsset({ geometry: geom }))
     const { morphKeys, morphWeights } = useCharacterStore.getState()
     expect(morphKeys).toEqual(['A', 'B'])
     expect(morphWeights).toEqual({ A: 0, B: 0 })
@@ -34,7 +33,7 @@ describe('character store', () => {
       materialAssign: { foo: 'head' },
       boneMap: { a: 'b' },
       headOffset: { position: { x: 1, y: 2, z: 3 }, rotation: { x: 0, y: 0, z: 0 }, scale: 1 },
-      base: { mesh: {} as unknown as THREE.Mesh } as unknown as AnyAsset,
+      base: mockAsset(),
     })
     const raw = localStorage.getItem('char-morphs')!
     const stored = JSON.parse(raw).state
