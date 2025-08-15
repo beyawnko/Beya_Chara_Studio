@@ -3,7 +3,7 @@ import * as THREE from 'three'
 import type { AnyAsset } from '../src/types'
 
 export function mockAsset(overrides: Partial<AnyAsset> = {}): AnyAsset {
-  const geometry = overrides.geometry ?? new THREE.BufferGeometry()
+  const geometry = overrides.geometry ?? overrides.mesh?.geometry ?? new THREE.BufferGeometry()
   return {
     name: 'mock',
     mesh: overrides.mesh ?? new THREE.SkinnedMesh(geometry),
